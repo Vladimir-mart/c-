@@ -1,0 +1,34 @@
+stages:
+  - style-check
+  - build
+  - test
+
+
+style-check:
+  stage: style-check
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - git submodule update --remote
+    - bash testing_repo/stylecheck.sh $CI_COMMIT_REF_NAME
+
+build:
+  stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - git submodule update --remote
+    - bash testing_repo/build_$CI_COMMIT_REF_NAME.sh $CI_COMMIT_REF_NAME
+  artifacts:
+    paths:
+      - $CI_COMMIT_REF_NAME/bin
+    expire_in: 1 week
+
+test:
+  needs: [build]
+  stage: test
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - git submodule update --remote
+    - bash testing_repo/test_$CI_COMMIT_REF_NAME.sh $CI_COMMIT_REF_NAME
