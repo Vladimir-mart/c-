@@ -14,16 +14,16 @@ using std::vector;
 
 class String {
  private:
-  char* str;
-  size_t capacity = 0;
-  size_t size = 0;
+  char* str_;
+  size_t capacity_ = 0;
+  size_t size_ = 0;
 
  public:
-  String& operator=(const String& other);
-  String& operator=(const char* other);
-  String& operator+=(const String& other);
-  String& operator+=(const char* other);
-  String& operator+=(const char other);
+  String& operator=(const String&);
+  String& operator=(const char*);
+  String& operator+=(const String&);
+  String& operator+=(const char*);
+  String& operator+=(const char);
   String& operator*=(int);
   void Resize(size_t new_size);
   void Resize(size_t new_size, char elem);
@@ -33,21 +33,21 @@ class String {
   size_t Capacity() const;
   size_t Size() const;
   void Reserve(size_t new_cap);
-  String(const char* str);
+  String(const char* str_);
   void PopBack();
   String(const size_t kSiz, const char& sim);
   void PushBack(const char elem);
   void Clear();
   void ShrinkToFit();
   void Swap(String& other);
-  char& operator[](const size_t index) { return this->str[index]; }
-  const char& operator[](const size_t index) const { return this->str[index]; }
-  char& Front() { return this->str[0]; }
-  const char& Front() const { return this->str[0]; }
-  char& Back() { return this->str[size - 1]; }
-  const char& Back() const { return this->str[size - 1]; }
-  bool Empty() const { return size == 0; }
-  bool operator<(const String& str) const;
+  char& operator[](const size_t index) { return this->str_[index]; }
+  const char& operator[](const size_t index) const { return this->str_[index]; }
+  char& Front() { return this->str_[0]; }
+  const char& Front() const { return this->str_[0]; }
+  char& Back() { return this->str_[size_ - 1]; }
+  const char& Back() const { return this->str_[size_ - 1]; }
+  bool Empty() const { return size_ == 0; }
+  bool operator<(const String& str_) const;
   bool operator>(const String&) const;
   bool operator<=(const String&) const;
   bool operator>=(const String&) const;
@@ -60,5 +60,8 @@ class String {
   ~String();
 };
 
-String operator*(String str, int m);
+
+String operator*(String str_, int m);
 String operator+(const String& other1, const String& other2);
+
+
