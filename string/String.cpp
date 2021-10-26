@@ -25,14 +25,14 @@ std::ostream& operator<<(std::ostream& out, const String& str) {
   return out;
 }
 
-String& String::operator=(const char* kOther) {
+String& String::operator=(const char* k_other) {
   if (this->size > 0) {
     delete[] str;
   }
-  int len = strlen(kOther);
+  int len = strlen(k_other);
   this->str = new char[len + 1];
   for (int i = 0; i < len; ++i) {
-    this->str[i] = kOther[i];
+    this->str[i] = k_other[i];
   }
   this->str[len] = '\0';
   this->capacity = len + 1;
