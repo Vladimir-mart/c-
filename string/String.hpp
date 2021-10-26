@@ -33,21 +33,21 @@ class String {
   size_t Capacity() const;
   size_t Size() const;
   void Reserve(size_t new_cap);
-  String(const char* str_);
+  String(const char* str);
   void PopBack();
   String(const size_t kSiz, const char& sim);
-  void PushBack(const char elem);
+  void PushBack(const char);
   void Clear();
   void ShrinkToFit();
   void Swap(String& other);
-  char& operator[](const size_t index) { return this->str_[index]; }
-  const char& operator[](const size_t index) const { return this->str_[index]; }
+  char& operator[](const size_t kIndex) { return this->str_[kIndex]; }
+  const char& operator[](const size_t kIndex) const { return this->str_[kIndex]; }
   char& Front() { return this->str_[0]; }
   const char& Front() const { return this->str_[0]; }
   char& Back() { return this->str_[size_ - 1]; }
   const char& Back() const { return this->str_[size_ - 1]; }
   bool Empty() const { return size_ == 0; }
-  bool operator<(const String& str_) const;
+  bool operator<(const String& str) const;
   bool operator>(const String&) const;
   bool operator<=(const String&) const;
   bool operator>=(const String&) const;
@@ -61,7 +61,7 @@ class String {
 };
 
 
-String operator*(String str_, int m);
+String operator*(String str, int m);
 String operator+(const String& other1, const String& other2);
 
 
