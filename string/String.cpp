@@ -9,25 +9,25 @@ void String::Swap(String& other) {
   other.str_ = temp;
 }
 
-std::istream& operator>>(std::istream& in, String& str_) {
-  str_.Clear();
+std::istream& operator>>(std::istream& in, String& str) {
+  str.Clear();
   char ch;
   while (in >> ch) {
-    str_.PushBack(ch);
+    str.PushBack(ch);
   }
   return in;
 }
 
-std::ostream& operator<<(std::ostream& out, const String& str_) {
-  for (size_t i = 0; i < str_.Size(); ++i) {
-    out << str_[i];
+std::ostream& operator<<(std::ostream& out, const String& str) {
+  for (size_t i = 0; i < str.Size(); ++i) {
+    out << str[i];
   }
   return out;
 }
 
 String& String::operator=(const char* k_other) {
   if (this->size_ > 0) {
-    delete[] str_;
+    delete[] this->str_;
   }
   int len = strlen(k_other);
   this->str_ = new char[len + 1];
@@ -58,25 +58,25 @@ String& String::operator=(const String& other) {
   return *this;
 }
 
-bool String::operator>(const String& str_) const { return str_ < *this; }
+bool String::operator>(const String& str) const { return str < *this; }
 
-bool String::operator<=(const String& str_) const { return !(*this > str_); }
+bool String::operator<=(const String& str) const { return !(*this > str); }
 
-bool String::operator>=(const String& str_) const { return !(*this < str_); }
+bool String::operator>=(const String& str) const { return !(*this < str); }
 
-bool String::operator==(const String& str_) const {
-  return !(*this < str_ || *this > str_);
+bool String::operator==(const String& str) const {
+  return !(*this < str || *this > str);
 }
 
-bool String::operator!=(const String& str_) const { return !(*this == str_); }
+bool String::operator!=(const String& str) const { return !(*this == str); }
 
-bool String::operator<(const String& str_) const {
-  for (size_t i = 0; i < min(this->size_, str_.Size()); ++i) {
-    if (this->str_[i] < str_[i]) {
-      return this->str_[i] < str_[i];
+bool String::operator<(const String& str) const {
+  for (size_t i = 0; i < min(this->size_, str.Size()); ++i) {
+    if (this->str_[i] < str[i]) {
+      return this->str_[i] < str[i];
     }
   }
-  return (this->size_ < str_.Size());
+  return (this->size_ < str.Size());
 }
 
 void String::ShrinkToFit() {
@@ -179,18 +179,18 @@ String& String::operator*=(int m) {
   return *this;
 }
 
-String operator*(String str_, int m) {
+String operator*(String str, int m) {
   String result = "";
   if (m == 0) {
     return result;
   }
   if (m == 1) {
-    result = str_;
+    result = str;
   } else {
-    result = str_ * (m / 2);
+    result = str * (m / 2);
     result += result;
     if (m % 2 == 1) {
-      result += str_;
+      result += str;
     }
   }
   return result;
@@ -277,7 +277,7 @@ void String::PushBack(const char kElem) {
     int len = this->size_ * 2;
     char* strt = new char[len + 1];
     for (size_t i = 0; i < size_; ++i) {
-      strt[i] = str_[i];
+      strt[i] = this->str_[i];
     }
     delete[] this->str_;
     this->str_ = strt;
@@ -298,13 +298,13 @@ void String::Clear() { this->size_ = 0; }
 
 const char* String::Data() const {
   this->str_[this->size_] = '\0';
-  return str_;
+  return this->str_;
 }
 
 String::String(const size_t kSiz, const char& sim) {
   this->str_ = new char[kSiz + 1];
   for (size_t i = 0; i < kSiz; ++i) {
-    str_[i] = sim;
+    this->str_[i] = sim;
   }
   this->str_[kSiz] = '\0';
   this->capacity_ = kSiz + 1;
@@ -316,22 +316,22 @@ String::String() {
   this->capacity_ = 1;
 }
 
-String::String(const String& str_) {
-  size_t len = str_.Size();
+String::String(const String& str) {
+  size_t len = str.Size();
   this->str_ = new char[len + 1];
   for (size_t i = 0; i < len; ++i) {
-    this->str_[i] = str_.str_[i];
+    this->str_[i] = str.str_[i];
   }
   this->str_[len] = '\0';
   this->capacity_ = len + 1;
   this->size_ = len;
 }
 
-String::String(const char* str_) {
-  int len = strlen(str_);
+String::String(const char* str) {
+  int len = strlen(str);
   this->str_ = new char[len + 1];
   for (int i = 0; i < len; ++i) {
-    this->str_[i] = str_[i];
+    this->str_[i] = str[i];
   }
   this->str_[len] = '\0';
   this->capacity_ = len + 1;
@@ -383,7 +383,7 @@ String String::Join(const std::vector<String>& vec) const {
   return result;
 }
 
-String::~String() { delete[] this->str_; }
+String::~String() { delete[] this->str_ ; }
 
 // int main() {
 //   String s = "aba";
