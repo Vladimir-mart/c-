@@ -25,14 +25,14 @@ std::ostream& operator<<(std::ostream& out, const String& str) {
   return out;
 }
 
-String& String::operator=(const char* other) {
+String& String::operator=(const char* kOther) {
   if (this->size > 0) {
     delete[] str;
   }
-  int len = strlen(other);
+  int len = strlen(kOther);
   this->str = new char[len + 1];
   for (int i = 0; i < len; ++i) {
-    this->str[i] = other[i];
+    this->str[i] = kOther[i];
   }
   this->str[len] = '\0';
   this->capacity = len + 1;
@@ -272,7 +272,7 @@ void String::PopBack() {
 
 size_t String::Capacity() const { return this->capacity - 1; }
 
-void String::PushBack(const char elem) {
+void String::PushBack(const char kElem) {
   if (this->size == (this->capacity - 1)) {
     int len = this->size * 2;
     char* strt = new char[len + 1];
@@ -281,12 +281,12 @@ void String::PushBack(const char elem) {
     }
     delete[] this->str;
     this->str = strt;
-    this->str[size] = elem;
+    this->str[size] = kElem;
     this->size = size + 1;
     this->capacity = len + 1;
     this->str[size] = '\0';
   } else {
-    this->str[size] = elem;
+    this->str[size] = kElem;
     this->size = size + 1;
     this->str[size] = '\0';
   }
@@ -301,14 +301,14 @@ const char* String::Data() const {
   return str;
 }
 
-String::String(const size_t siz, const char& sim) {
-  this->str = new char[siz + 1];
-  for (size_t i = 0; i < siz; ++i) {
+String::String(const size_t kSiz, const char& sim) {
+  this->str = new char[kSiz + 1];
+  for (size_t i = 0; i < kSiz; ++i) {
     str[i] = sim;
   }
-  this->str[siz] = '\0';
-  this->capacity = siz + 1;
-  this->size = siz;
+  this->str[kSiz] = '\0';
+  this->capacity = kSiz + 1;
+  this->size = kSiz;
 }
 
 String::String() {
