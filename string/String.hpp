@@ -35,7 +35,7 @@ class String {
   void Reserve(size_t new_cap);
   String(const char* str);
   void PopBack();
-  String(const size_t siz, const char& sim);
+  String(const size_t kSiz, const char& sim);
   void PushBack(const char elem);
   void Clear();
   void ShrinkToFit();
@@ -60,8 +60,5 @@ class String {
   ~String();
 };
 
-
 String operator*(String str, int m);
 String operator+(const String& other1, const String& other2);
-
-
