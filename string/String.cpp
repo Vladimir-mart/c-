@@ -196,8 +196,8 @@ String operator*(String str, int m) {
   return result;
 }
 
-String& String::operator+=(const char other) {
-  PushBack(other);
+String& String::operator+=(const char kOther) {
+  PushBack(kOther);
   return *this;
 }
 
