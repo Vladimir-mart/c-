@@ -23,7 +23,7 @@ class String {
   String& operator=(const char*);
   String& operator+=(const String&);
   String& operator+=(const char*);
-  String& operator+=(char kOther);
+  String& operator+=(char);
   String& operator*=(int);
   void Resize(size_t new_size);
   void Resize(size_t new_size, char elem);
@@ -35,7 +35,7 @@ class String {
   void Reserve(size_t new_cap);
   String(const char* str);
   void PopBack();
-  String(size_t kSiz, const char& sim);
+  String(size_t, const char& sim);
   void PushBack(char);
   void Clear();
   void ShrinkToFit();
