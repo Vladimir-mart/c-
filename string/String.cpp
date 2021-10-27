@@ -34,16 +34,13 @@ String& String::operator=(const char* k_other) {
   for (int i = 0; i < len; ++i) {
     this->str_[i] = k_other[i];
   }
-  this->str_[len] = '\0';
   this->capacity_ = len + 1;
   this->size_ = len;
   return *this;
 }
 
 String& String::operator=(const String& other) {
-  if (this->str_ == other.Data()) {
-    return *this;
-  }
+  //Data
   if (this->size_ > 0) {
     delete[] this->str_;
   }
@@ -52,7 +49,6 @@ String& String::operator=(const String& other) {
   for (int i = 0; i < len; ++i) {
     this->str_[i] = other.str_[i];
   }
-  this->str_[len] = '\0';
   this->capacity_ = len + 1;
   this->size_ = len;
   return *this;
@@ -173,7 +169,6 @@ String& String::operator+=(const char kOther) {
 
 String& String::operator+=(const char* other) {
   size_t len = strlen(other);
-
   if (this->capacity_ <= (this->size_ + len + 1)) {
     char* strt = new char[this->size_ + len + 1];
     size_t i = 0;
@@ -200,7 +195,6 @@ String& String::operator+=(const char* other) {
 
 String& String::operator+=(const String& other) {
   size_t len = other.Size();
-
   if (this->capacity_ <= (this->size_ + len + 1)) {
     char* strt = new char[this->size_ + len + 1];
     size_t i = 0;
@@ -261,7 +255,7 @@ size_t String::Size() const { return this->size_; }
 void String::Clear() { this->size_ = 0; }
 
 const char* String::Data() const {
-  if (this->size_ > 0) {
+  if(this->size_ > 0 ) {
     this->str_[this->size_] = '\0';
   }
   return this->str_;
@@ -366,8 +360,8 @@ vector<String> String::Split(const String& str_div) {
 }
 
 // int main() {
-//   String s;
-//   s.PushBack('c');
-//   cout << s.Size();
+//   String s = "aba";
+//   s.Resize(10);
+//   if(s.Size() == 10);
 
 // }
