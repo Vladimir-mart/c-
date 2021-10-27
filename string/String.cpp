@@ -89,7 +89,6 @@ void String::ShrinkToFit() {
     delete[] this->str_;
     this->str_ = strt;
     this->capacity_ = this->size_ + 1;
-    this->str_[this->size_] = '\0';
   }
 }
 
@@ -103,7 +102,6 @@ void String::Reserve(size_t new_cap) {
     delete[] this->str_;
     this->str_ = strt;
     this->capacity_ = 2 * new_cap + 1;
-    this->str_[this->size_] = '\0';
   }
 }
 
@@ -123,10 +121,8 @@ void String::Resize(size_t new_size, char elem) {
     this->str_ = strt;
     this->size_ = new_size;
     this->capacity_ = new_size + 1;
-    this->str_[this->size_] = '\0';
   } else {
     this->size_ = new_size;
-    this->str_[new_size] = '\0';
   }
 }
 
@@ -143,10 +139,8 @@ void String::Resize(size_t new_size) {
     this->str_ = strt;
     this->size_ = new_size;
     this->capacity_ = new_size + 1;
-    this->str_[this->size_] = '\0';
   } else {
     this->size_ = new_size;
-    this->str_[new_size] = '\0';
   }
 }
 
@@ -195,13 +189,11 @@ String& String::operator+=(const char* other) {
     this->str_ = strt;
     this->size_ = len + this->size_;
     this->capacity_ = this->size_ + 1;
-    this->str_[this->size_] = '\0';
   } else {
     for (size_t i = this->size_, j = 0; j < len; ++i, ++j) {
       this->str_[i] = other[j];
     }
     this->size_ += len;
-    this->str_[this->size_ + 1] = '\0';
   }
   return *this;
 }
@@ -222,13 +214,11 @@ String& String::operator+=(const String& other) {
     this->str_ = strt;
     this->size_ = len + this->size_;
     this->capacity_ = this->size_ + 1;
-    this->str_[this->size_] = '\0';
   } else {
     for (size_t i = this->size_, j = 0; j < len; ++i, ++j) {
       this->str_[i] = other.str_[j];
     }
     this->size_ += len;
-    this->str_[this->size_ + 1] = '\0';
   }
   return *this;
 }
@@ -255,16 +245,14 @@ void String::PushBack(const char kElem) {
     for (size_t i = 0; i < size_; ++i) {
       strt[i] = this->str_[i];
     }
+    strt[size_] = kElem;
     delete[] this->str_;
     this->str_ = strt;
-    this->str_[size_] = kElem;
     this->size_ = size_ + 1;
     this->capacity_ = len + 1;
-    this->str_[size_] = '\0';
   } else {
     this->str_[size_] = kElem;
     this->size_ = size_ + 1;
-    this->str_[size_] = '\0';
   }
 }
 
@@ -273,7 +261,9 @@ size_t String::Size() const { return this->size_; }
 void String::Clear() { this->size_ = 0; }
 
 const char* String::Data() const {
-  this->str_[this->size_] = '\0';
+  if (this->size_ > 0) {
+    this->str_[this->size_] = '\0';
+  }
   return this->str_;
 }
 
@@ -282,7 +272,6 @@ String::String(const size_t kSiz, const char& sim) {
   for (size_t i = 0; i < kSiz; ++i) {
     this->str_[i] = sim;
   }
-  this->str_[kSiz] = '\0';
   this->capacity_ = kSiz + 1;
   this->size_ = kSiz;
 }
@@ -298,7 +287,6 @@ String::String(const String& str) {
   for (size_t i = 0; i < len; ++i) {
     this->str_[i] = str.str_[i];
   }
-  this->str_[len] = '\0';
   this->capacity_ = len + 1;
   this->size_ = len;
 }
@@ -309,7 +297,6 @@ String::String(const char* str) {
   for (int i = 0; i < len; ++i) {
     this->str_[i] = str[i];
   }
-  this->str_[len] = '\0';
   this->capacity_ = len + 1;
   this->size_ = len;
 }
@@ -379,20 +366,8 @@ vector<String> String::Split(const String& str_div) {
 }
 
 // int main() {
-//     String s = "aba caba 1";
-//     String d = " ";
-//     std::vector<String> expected{"just", "", "a", "test", ""};
-//     cout << s.Size() << "Siz\n";
-//     vector<String> lol = String("full match").Split("full match");
-//     for(int i =0 ;i < lol.size(); i++) {
-//         if (lol[i] == expected[i]) {
-//             cout << '"' << lol[i] << '"'<< '\n';
-//         }
-//     }
-//     cout << lol[0].Size() << " \n";
-//     cout << lol[1].Size() << " \n";
-//     if(expected == String("just  a test ").Split()){
-//         cout << "+\n";
-//     }
+//   String s;
+//   s.PushBack('c');
+//   cout << s.Size();
 
 // }
