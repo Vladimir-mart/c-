@@ -53,6 +53,7 @@ class String {
   bool operator>=(const String&) const;
   bool operator==(const String&) const;
   bool operator!=(const String&) const;
+  void SplitHelpSize(String&, const String&, size_t&, String&, vector<String>&);
   friend std::ostream& operator<<(std::ostream&, const String&);
   friend std::istream& operator>>(std::istream&, String&);
   vector<String> Split(const String& str_div = " "); 
