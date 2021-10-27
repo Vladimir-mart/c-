@@ -40,7 +40,7 @@ String& String::operator=(const char* k_other) {
 }
 
 String& String::operator=(const String& other) {
-  //Data
+  // Data
   if (this->size_ > 0) {
     delete[] this->str_;
   }
@@ -255,7 +255,7 @@ size_t String::Size() const { return this->size_; }
 void String::Clear() { this->size_ = 0; }
 
 const char* String::Data() const {
-  if(this->size_ > 0 ) {
+  if( this->size_ > 0 ) {
     this->str_[this->size_] = '\0';
   }
   return this->str_;
