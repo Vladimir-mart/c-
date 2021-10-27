@@ -233,17 +233,27 @@ void String::PopBack() {
 size_t String::Capacity() const { return this->capacity_ - 1; }
 
 void String::PushBack(const char kElem) {
-  if (this->size_ == (this->capacity_ - 1)) {
-    int len = this->size_ * 2;
-    char* strt = new char[len + 1];
+  if (this->size_ >= (this->capacity_ - 1)) {
+    char* strt;
+    if (this->size_ == 0) {
+      if (capacity_ == 1) {
+        strt = new char[capacity_ * 2 + 1];
+        capacity_ *= 2 + 1;
+      } else {
+        strt = new char[(capacity_ - 1) * 2 + 1];
+        capacity_ = (capacity_ - 1) * 2 + 1;
+      }
+    } else {
+      strt = new char[(capacity_ - 1) * 2 + 1];
+      capacity_ = (capacity_ - 1) * 2 + 1;
+    }
     for (size_t i = 0; i < size_; ++i) {
       strt[i] = this->str_[i];
     }
-    strt[size_] = kElem;
     delete[] this->str_;
     this->str_ = strt;
-    this->size_ = size_ + 1;
-    this->capacity_ = len + 1;
+    this->str_[size_] = kElem;
+    this->size_++;
   } else {
     this->str_[size_] = kElem;
     this->size_ = size_ + 1;
@@ -360,8 +370,15 @@ vector<String> String::Split(const String& str_div) {
 }
 
 // int main() {
-//   String s = "aba";
-//   s.Resize(10);
-//   if(s.Size() == 10);
-
+//   String s = "a";
+//   s *= 10;
+//   String b("c");
+//   b = b *15;
+//   b += s;
+//   cout << b << '\n';
+//   cout << s << '\n';
+//   vector<String> h = b.Split("c");
+//   for(int i = 0; i < h.size(); i++){
+//     cout << h[i] << " ";
+//   }
 // }
