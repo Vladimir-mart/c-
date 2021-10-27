@@ -8,8 +8,8 @@
 using std::cout;
 using std::min;
 using std::size_t;
-using std::strlen;
 using std::string;
+using std::strlen;
 using std::vector;
 
 class String {
@@ -23,7 +23,7 @@ class String {
   String& operator=(const char*);
   String& operator+=(const String&);
   String& operator+=(const char*);
-  String& operator+=(char);
+  String& operator+=(const char);
   String& operator*=(int);
   void Resize(size_t new_size);
   void Resize(size_t new_size, char elem);
@@ -35,13 +35,15 @@ class String {
   void Reserve(size_t new_cap);
   String(const char* str);
   void PopBack();
-  String(size_t, const char& sim);
-  void PushBack(char);
+  String(const size_t kSiz, const char& sim);
+  void PushBack(const char);
   void Clear();
   void ShrinkToFit();
   void Swap(String& other);
   char& operator[](const size_t kIndex) { return this->str_[kIndex]; }
-  const char& operator[](const size_t kIndex) const { return this->str_[kIndex]; }
+  const char& operator[](const size_t kIndex) const {
+    return this->str_[kIndex];
+  }
   char& Front() { return this->str_[0]; }
   const char& Front() const { return this->str_[0]; }
   char& Back() { return this->str_[size_ - 1]; }
@@ -56,13 +58,10 @@ class String {
   void SplitHelpSize(String&, const String&, size_t&, String&, vector<String>&);
   friend std::ostream& operator<<(std::ostream&, const String&);
   friend std::istream& operator>>(std::istream&, String&);
-  vector<String> Split(const String& str_div = " "); 
+  vector<String> Split(const String& str_div = " ");
   String Join(const std::vector<String>& vec) const;
   ~String();
 };
 
-
 String operator*(String str, int m);
 String operator+(const String& other1, const String& other2);
-
-
