@@ -323,34 +323,34 @@ String String::Join(const std::vector<String>& vec) const {
 
 String::~String() { delete[] str_; }
 
-vector<String> String::Split(const String& delim) {
+vector<String> String::Split(const String& str_div) {
   std::vector<String> result;
   String temp;
-  if (Size() < delim.Size()) {
+  if (Size() < str_div.Size()) {
     return {temp};
   }
-  for (size_t i = 0; i <= Size() - delim.Size(); ++i) {
+  for (size_t i = 0; i <= Size() - str_div.Size(); ++i) {
     String temp1;
-    for (size_t j = i; j < i + delim.Size(); ++j) {
+    for (size_t j = i; j < i + str_div.Size(); ++j) {
       temp1 += (*this)[j];
     }
-    if (i < Size() - delim.Size() && temp1 != delim) {
+    if (i < Size() - str_div.Size() && temp1 != str_div) {
       temp += (*this)[i];
-    } else if (temp1 == delim) {
+    } else if (temp1 == str_div) {
       result.push_back(temp);
       temp.Clear();
-      i += delim.Size() - 1;
+      i += str_div.Size() - 1;
     }
-    if (i == Size() - delim.Size() && temp1 != delim) {
+    if (i == Size() - str_div.Size() && temp1 != str_div) {
       temp += temp1;
       result.push_back(temp);
     }
   }
   String temp2 = temp;
-  for (size_t i = Size() - delim.Size(); i < Size(); ++i) {
+  for (size_t i = Size() - str_div.Size(); i < Size(); ++i) {
     temp += (*this)[i];
   }
-  temp == delim ? result.push_back(temp2) : temp.Clear();
+  temp == str_div ? result.push_back(temp2) : temp.Clear();
   return result;
 }
 
