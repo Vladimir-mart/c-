@@ -40,9 +40,8 @@ String& String::operator=(const char* k_other) {
 }
 
 String& String::operator=(const String& other) {
-  //Data
-  if(this->str_ == other.Data())
-  {
+  // Data
+  if (this->str_ == other.Data()) {
     return *this;
   }
   if (this->size_ > 0) {
@@ -268,7 +267,7 @@ size_t String::Size() const { return this->size_; }
 void String::Clear() { this->size_ = 0; }
 
 const char* String::Data() const {
-  if(this->size_ > 0 ) {
+  if (this->size_ > 0) {
     this->str_[this->size_] = '\0';
   }
   return this->str_;
@@ -325,7 +324,8 @@ String String::Join(const std::vector<String>& vec) const {
 String::~String() { delete[] str_; }
 
 // void String::SplitHelpSize(String& temp, const String& str_div,
-//                            size_t& str_point, String& t, vector<String>& ret) {
+//                            size_t& str_point, String& t, vector<String>& ret)
+//                            {
 //   for (int iq = 0; iq < 2; ++iq) {
 //     if (t == str_div) {
 //       for (size_t i = 0; i < str_div.Size(); ++i) {
@@ -414,9 +414,8 @@ vector<String> String::Split(const String& delim) {
 //   //   s.PushBack(ch);
 //   //   cout << s << "\n";
 //   // }
-//     std::vector<String> expected{"hello", "world,no split here", "", "1", ""};
-//     if(expected == String("hello, world,no split here, , 1, ").Split(", "));
-
+//     std::vector<String> expected{"hello", "world,no split here", "", "1",
+//     ""}; if(expected == String("hello, world,no split here, , 1, ").Split(",
+//     "));
 
 // }
-
