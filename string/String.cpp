@@ -40,17 +40,20 @@ String& String::operator=(const char* k_other) {
 }
 
 String& String::operator=(const String& other) {
-  // Data
+  //Data
+  if(this->str_ == other.Data())
+  {
+    return *this;
+  }
   if (this->size_ > 0) {
     delete[] this->str_;
   }
-  int len = other.Size();
-  this->str_ = new char[len + 1];
-  for (int i = 0; i < len; ++i) {
+  this->str_ = new char[other.Size() + 1];
+  for (size_t i = 0; i < other.Size(); ++i) {
     this->str_[i] = other.str_[i];
   }
-  this->capacity_ = len + 1;
-  this->size_ = len;
+  this->capacity_ = other.Size() + 1;
+  this->size_ = other.Size();
   return *this;
 }
 
@@ -146,7 +149,7 @@ String& String::operator*=(int m) {
 }
 
 String operator*(String str, int m) {
-  String result = "";
+  String result;
   if (m == 0) {
     return result;
   }
@@ -234,7 +237,7 @@ size_t String::Capacity() const { return this->capacity_ - 1; }
 
 void String::PushBack(const char kElem) {
   if (this->size_ >= (this->capacity_ - 1)) {
-    char* strt;
+    char* strt = nullptr;
     if (this->size_ == 0) {
       if (capacity_ == 1) {
         strt = new char[capacity_ * 2 + 1];
@@ -253,10 +256,10 @@ void String::PushBack(const char kElem) {
     delete[] this->str_;
     this->str_ = strt;
     this->str_[size_] = kElem;
-    this->size_++;
+    ++size_;
   } else {
     this->str_[size_] = kElem;
-    this->size_ = size_ + 1;
+    this->size_ += 1;
   }
 }
 
@@ -265,7 +268,7 @@ size_t String::Size() const { return this->size_; }
 void String::Clear() { this->size_ = 0; }
 
 const char* String::Data() const {
-  if (this->size_ > 0) {
+  if(this->size_ > 0 ) {
     this->str_[this->size_] = '\0';
   }
   return this->str_;
@@ -319,66 +322,101 @@ String String::Join(const std::vector<String>& vec) const {
   return result;
 }
 
-String::~String() { delete[] this->str_; }
+String::~String() { delete[] str_; }
 
-void String::SplitHelpSize(String& temp, const String& str_div,
-                           size_t& str_point, String& t, vector<String>& ret) {
-  for (int iq = 0; iq < 2; ++iq) {
-    if (t == str_div) {
-      for (size_t i = 0; i < str_div.Size(); ++i) {
-        temp.PopBack();
-      }
-      ret.push_back(temp);
+// void String::SplitHelpSize(String& temp, const String& str_div,
+//                            size_t& str_point, String& t, vector<String>& ret) {
+//   for (int iq = 0; iq < 2; ++iq) {
+//     if (t == str_div) {
+//       for (size_t i = 0; i < str_div.Size(); ++i) {
+//         temp.PopBack();
+//       }
+//       ret.push_back(temp);
+//       temp.Clear();
+//       t.Clear();
+//       if (str_point < this->size_) {
+//         for (size_t i = 0; i < str_div.Size(); ++i) {
+//           t += this->str_[str_point];
+//           ++str_point;
+//         }
+//       }
+//       temp = t;
+//     }
+//   }
+// }
+
+// vector<String> String::Split(const String& str_div) {
+//   vector<String> ret;
+//   String temp ;
+//   String t;
+//   if (this->size_ == 0) {
+//     ret.push_back("");
+//     return ret;
+//   }
+//   for (size_t i = 0; i < str_div.Size(); i++) {
+//     t += this->str_[i];
+//   }
+//   temp = t;
+//   size_t str_point = temp.Size();
+//   for (; str_point <= Size();) {
+//     SplitHelpSize(temp, str_div, str_point, t, ret);
+//     if (str_point < this->size_) {
+//       temp.PushBack(str_[str_point]);
+//     }
+//     ++str_point;
+//     for (size_t k = temp.Size() - str_div.Size(), i = 0; k < temp.Size();
+//          ++k, ++i) {
+//       t[i] = temp[k];
+//     }
+//   }
+//   temp.PopBack();
+//   ret.push_back(temp);
+//   temp.Clear();
+//   t.Clear();
+//   return ret;
+// }
+vector<String> String::Split(const String& delim) {
+  std::vector<String> result;
+  String temp;
+  if (Size() < delim.Size()) {
+    return {temp};
+  }
+  for (size_t i = 0; i <= Size() - delim.Size(); ++i) {
+    String temp1;
+    for (size_t j = i; j < i + delim.Size(); ++j) {
+      temp1 += (*this)[j];
+    }
+    if (i < Size() - delim.Size() && temp1 != delim) {
+      temp += (*this)[i];
+    } else if (temp1 == delim) {
+      result.push_back(temp);
       temp.Clear();
-      t.Clear();
-      if (str_point < this->size_) {
-        for (size_t i = 0; i < str_div.Size(); ++i) {
-          t += this->str_[str_point];
-          ++str_point;
-        }
-      }
-      temp = t;
+      i += delim.Size() - 1;
+    }
+    if (i == Size() - delim.Size() && temp1 != delim) {
+      temp += temp1;
+      result.push_back(temp);
     }
   }
-}
-
-vector<String> String::Split(const String& str_div) {
-  vector<String> ret;
-  String temp = "";
-  String t = "";
-  if (this->size_ == 0) {
-    ret.push_back("");
-    return ret;
+  String temp2 = temp;
+  for (size_t i = Size() - delim.Size(); i < Size(); ++i) {
+    temp += (*this)[i];
   }
-  for (size_t i = 0; i < str_div.Size(); i++) {
-    t += this->str_[i];
-  }
-  temp = t;
-  size_t str_point = temp.Size();
-  for (; str_point <= Size();) {
-    SplitHelpSize(temp, str_div, str_point, t, ret);
-    temp.PushBack(this->str_[str_point]);
-    ++str_point;
-    for (size_t k = temp.Size() - str_div.Size(), i = 0; k < temp.Size();
-         ++k, ++i) {
-      t[i] = temp[k];
-    }
-  }
-  temp.PopBack();
-  ret.push_back(temp);
-  return ret;
+  temp == delim ? result.push_back(temp2) : temp.Clear();
+  return result;
 }
 
 // int main() {
-//   String s = "a";
-//   s *= 10;
-//   String b("c");
-//   b = b *15;
-//   b += s;
-//   cout << b << '\n';
-//   cout << s << '\n';
-//   vector<String> h = b.Split("c");
-//   for(int i = 0; i < h.size(); i++){
-//     cout << h[i] << " ";
-//   }
+//   // String s = "";
+//   // char ch = 'a';
+//   // while (ch != '9'){
+//   //   cin >> ch;
+//   //   s.PushBack(ch);
+//   //   cout << s << "\n";
+//   // }
+//     std::vector<String> expected{"hello", "world,no split here", "", "1", ""};
+//     if(expected == String("hello, world,no split here, , 1, ").Split(", "));
+
+
 // }
+
