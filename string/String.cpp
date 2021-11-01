@@ -1,6 +1,6 @@
 #include "String.hpp"
 
-String::String(const size_t kSiz, const char &symbol) {
+String::String(const size_t kSiz, const char& symbol) {
   str_ = new char[kSiz + 1];
   for (size_t i = 0; i < kSiz; ++i) {
     str_[i] = symbol;
@@ -14,7 +14,7 @@ String::String() {
   capacity_ = 1;
 }
 
-String::String(const String &str) {
+String::String(const String& str) {
   size_t len = str.Size();
   str_ = new char[len + 1];
   for (size_t i = 0; i < len; ++i) {
@@ -41,13 +41,13 @@ String::String(char symbol) {
   capacity_ = 2;
 }
 
-void String::Swap(String &other) {
+void String::Swap(String& other) {
   char* temp = str_;
   str_ = other.str_;
   other.str_ = temp;
 }
 
-std::istream &operator>>(std::istream &in, String &str) {
+std::istream& operator>>(std::istream& in, String& str) {
   str.Clear();
   char ch;
   while (in >> ch) {
@@ -56,14 +56,14 @@ std::istream &operator>>(std::istream &in, String &str) {
   return in;
 }
 
-std::ostream &operator<<(std::ostream &out, const String &str) {
+std::ostream& operator<<(std::ostream& out, const String& str) {
   for (size_t i = 0; i < str.Size(); ++i) {
     out << str[i];
   }
   return out;
 }
 
-String &String::operator=(const String &other) {
+String& String::operator=(const String& other) {
   // Data
   if (str_ == other.str_) {
     return *this;
@@ -80,19 +80,19 @@ String &String::operator=(const String &other) {
   return *this;
 }
 
-bool String::operator<=(const String &str) const { return !(*this > str); }
+bool String::operator<=(const String& str) const { return !(*this > str); }
 
-bool String::operator>=(const String &str) const { return !(*this < str); }
+bool String::operator>=(const String& str) const { return !(*this < str); }
 
-bool String::operator==(const String &str) const {
+bool String::operator==(const String& str) const {
   return !(*this < str || *this > str);
 }
 
-bool String::operator!=(const String &str) const { return !(*this == str); }
+bool String::operator!=(const String& str) const { return !(*this == str); }
 
-bool operator>(const String &str2, const String &str1) { return str1 < str2; }
+bool operator>(const String& str2, const String& str1) { return str1 < str2; }
 
-bool operator<(const String &str2, const String &str1) {
+bool operator<(const String& str2, const String& str1) {
   for (size_t i = 0; i < min(str2.Size(), str1.Size()); ++i) {
     if (str2[i] < str1[i]) {
       return str2[i] < str1[i];
@@ -166,7 +166,7 @@ void String::Resize(size_t new_size) {
   }
 }
 
-String &String::operator*=(int m) {
+String& String::operator*=(int m) {
   (*this) = (*this) * m;
   return *this;
 }
@@ -188,7 +188,7 @@ String operator*(String str, unsigned int m) {
   return result;
 }
 
-String &String::operator+=(const String &other) {
+String& String::operator+=(const String& other) {
   size_t len = other.Size();
   if (capacity_ <= (size_ + len + 1)) {
     char* strt = new char[size_ + len + 1];
@@ -212,7 +212,7 @@ String &String::operator+=(const String &other) {
   return *this;
 }
 
-String operator+(const String &other1, const String &other2) {
+String operator+(const String& other1, const String& other2) {
   String result = other1;
   result += other2;
   return result;
@@ -269,7 +269,7 @@ const char* String::Data() const {
   return str_;
 }
 
-String String::Join(const std::vector<String> &vec) const {
+String String::Join(const std::vector<String>& vec) const {
   String result = "";
   if (vec.empty()) {
     return result;
@@ -285,8 +285,8 @@ String String::Join(const std::vector<String> &vec) const {
 
 String::~String() { delete[] str_; }
 
-void String::SplitHelpSize(String &temp, const String &str_div,
-                           size_t &str_point, String &t, vector<String> &ret) {
+void String::SplitHelpSize(String& temp, const String& str_div,
+                           size_t& str_point, String& t, vector<String>& ret) {
   int pol = 0;
   int iter = 0;
   for (size_t iq = 0; iq < Size(); ++iq) {
@@ -317,7 +317,7 @@ void String::SplitHelpSize(String &temp, const String &str_div,
   }
 }
 
-vector<String> String::Split(const String &str_div) {
+vector<String> String::Split(const String& str_div) {
   vector<String> ret;
   String str_push;
   String div_temp;
