@@ -24,7 +24,7 @@ class String {
   String &operator*=(int);
 
   void Resize(size_t new_size);
-  void Resize(size_t new_size, char elem);
+  void Resize(size_t new_size, char symbol);
   size_t Capacity() const;
   size_t Size() const;
   void Reserve(size_t new_cap);
