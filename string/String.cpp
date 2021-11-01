@@ -310,7 +310,7 @@ void String::SplitHelpSize(String& temp, const String& str_div,
     if (iter == 2 && pol <= 1) {
       break;
     }
-    if (iter == 2) {
+    if (iter == 2 && pol <= 1) {
       pol = 0;
       iter = 0;
     }
@@ -332,14 +332,15 @@ vector<String> String::Split(const String& str_div) {
   size_t str_point = str_push.Size();
   for (; str_point <= Size();) {
     SplitHelpSize(str_push, str_div, str_point, div_temp, ret);
-    str_push.PushBack(str_[str_point]);
+    if (str_point < Size()) {
+      str_push.PushBack(str_[str_point]);
+    }
     ++str_point;
     for (size_t k = str_push.Size() - str_div.Size(), i = 0;
          k < str_push.Size(); ++k, ++i) {
       div_temp[i] = str_push[k];
     }
   }
-  str_push.PopBack();
   ret.push_back(str_push);
   str_push.Clear();
   div_temp.Clear();
