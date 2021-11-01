@@ -1,15 +1,53 @@
 #include "String.hpp"
 
-using std::cin;
-using std::cout;
+String::String(const size_t kSiz, const char &symbol) {
+  this->str_ = new char[kSiz + 1];
+  for (size_t i = 0; i < kSiz; ++i) {
+    this->str_[i] = symbol;
+  }
+  this->capacity_ = kSiz + 1;
+  this->size_ = kSiz;
+}
 
-void String::Swap(String& other) {
+String::String() {
+  this->str_ = nullptr;
+  this->capacity_ = 1;
+}
+
+String::String(const String &str) {
+  size_t len = str.Size();
+  this->str_ = new char[len + 1];
+  for (size_t i = 0; i < len; ++i) {
+    this->str_[i] = str.str_[i];
+  }
+  this->capacity_ = len + 1;
+  this->size_ = len;
+}
+
+String::String(const char* str) {
+  int len = strlen(str);
+  this->str_ = new char[len + 1];
+  for (int i = 0; i < len; ++i) {
+    this->str_[i] = str[i];
+  }
+  this->capacity_ = len + 1;
+  this->size_ = len;
+}
+
+String::String(char symbol) {
+  this->str_ = new char[2];
+  this->str_[0] = symbol;
+  this->size_ = 1;
+  this->capacity_ = 2;
+}
+
+void String::Swap(String &other) {
   char* temp = this->str_;
   this->str_ = other.str_;
   other.str_ = temp;
 }
 
-std::istream& operator>>(std::istream& in, String& str) {
+std::istream &operator>>(std::istream &in, String &str) {
   str.Clear();
   char ch;
   while (in >> ch) {
@@ -18,28 +56,14 @@ std::istream& operator>>(std::istream& in, String& str) {
   return in;
 }
 
-std::ostream& operator<<(std::ostream& out, const String& str) {
+std::ostream &operator<<(std::ostream &out, const String &str) {
   for (size_t i = 0; i < str.Size(); ++i) {
     out << str[i];
   }
   return out;
 }
 
-String& String::operator=(const char* k_other) {
-  if (this->size_ > 0) {
-    delete[] this->str_;
-  }
-  size_t len = strlen(k_other);
-  this->str_ = new char[len + 1];
-  for (size_t i = 0; i < len; ++i) {
-    this->str_[i] = k_other[i];
-  }
-  this->capacity_ = len + 1;
-  this->size_ = len;
-  return *this;
-}
-
-String& String::operator=(const String& other) {
+String &String::operator=(const String &other) {
   // Data
   if (this->str_ == other.str_) {
     return *this;
@@ -56,25 +80,25 @@ String& String::operator=(const String& other) {
   return *this;
 }
 
-bool String::operator>(const String& str) const { return str < *this; }
+bool String::operator<=(const String &str) const { return !(*this > str); }
 
-bool String::operator<=(const String& str) const { return !(*this > str); }
+bool String::operator>=(const String &str) const { return !(*this < str); }
 
-bool String::operator>=(const String& str) const { return !(*this < str); }
-
-bool String::operator==(const String& str) const {
+bool String::operator==(const String &str) const {
   return !(*this < str || *this > str);
 }
 
-bool String::operator!=(const String& str) const { return !(*this == str); }
+bool String::operator!=(const String &str) const { return !(*this == str); }
 
-bool String::operator<(const String& str) const {
-  for (size_t i = 0; i < min(this->size_, str.Size()); ++i) {
-    if (this->str_[i] < str[i]) {
-      return this->str_[i] < str[i];
+bool operator>(const String &str2, const String &str1) { return str1 < str2; }
+
+bool operator<(const String &str2, const String &str1) {
+  for (size_t i = 0; i < min(str2.Size(), str1.Size()); ++i) {
+    if (str2[i] < str1[i]) {
+      return str2[i] < str1[i];
     }
   }
-  return (this->size_ < str.Size());
+  return (str2.Size() < str1.Size());
 }
 
 void String::ShrinkToFit() {
@@ -103,7 +127,7 @@ void String::Reserve(size_t new_cap) {
   }
 }
 
-void String::Resize(size_t new_size, char elem) {
+void String::Resize(size_t new_size, char symbol) {
   if (new_size >= this->capacity_) {
     char* strt = new char[new_size + 1];
     size_t i = 0;
@@ -111,7 +135,7 @@ void String::Resize(size_t new_size, char elem) {
       strt[i] = this->str_[i];
     }
     for (size_t j = 0; j < new_size - this->size_; j++, i++) {
-      strt[i] = elem;
+      strt[i] = symbol;
     }
     if (this->size_ > 0) {
       delete[] this->str_;
@@ -142,12 +166,12 @@ void String::Resize(size_t new_size) {
   }
 }
 
-String& String::operator*=(int m) {
+String &String::operator*=(int m) {
   (*this) = (*this) * m;
   return *this;
 }
 
-String operator*(String str, int m) {
+String operator*(String str, unsigned int m) {
   String result;
   if (m == 0) {
     return result;
@@ -164,38 +188,7 @@ String operator*(String str, int m) {
   return result;
 }
 
-String& String::operator+=(const char kOther) {
-  PushBack(kOther);
-  return *this;
-}
-
-String& String::operator+=(const char* other) {
-  size_t len = strlen(other);
-  if (this->capacity_ <= (this->size_ + len + 1)) {
-    char* strt = new char[this->size_ + len + 1];
-    size_t i = 0;
-    for (; i < this->size_; ++i) {
-      strt[i] = this->str_[i];
-    }
-    for (size_t j = 0; j < len; j++, i++) {
-      strt[i] = other[j];
-    }
-    if (this->size_ > 0) {
-      delete[] this->str_;
-    }
-    this->str_ = strt;
-    this->size_ = len + this->size_;
-    this->capacity_ = this->size_ + 1;
-  } else {
-    for (size_t i = this->size_, j = 0; j < len; ++i, ++j) {
-      this->str_[i] = other[j];
-    }
-    this->size_ += len;
-  }
-  return *this;
-}
-
-String& String::operator+=(const String& other) {
+String &String::operator+=(const String &other) {
   size_t len = other.Size();
   if (this->capacity_ <= (this->size_ + len + 1)) {
     char* strt = new char[this->size_ + len + 1];
@@ -219,7 +212,7 @@ String& String::operator+=(const String& other) {
   return *this;
 }
 
-String operator+(const String& other1, const String& other2) {
+String operator+(const String &other1, const String &other2) {
   String result = other1;
   result += other2;
   return result;
@@ -234,7 +227,7 @@ void String::PopBack() {
 
 size_t String::Capacity() const { return this->capacity_ - 1; }
 
-void String::PushBack(const char kElem) {
+void String::PushBack(const char kSymbol) {
   if (this->size_ >= (this->capacity_ - 1)) {
     char* strt = nullptr;
     if (this->size_ == 0) {
@@ -254,10 +247,10 @@ void String::PushBack(const char kElem) {
     }
     delete[] this->str_;
     this->str_ = strt;
-    this->str_[size_] = kElem;
+    this->str_[size_] = kSymbol;
     ++size_;
   } else {
-    this->str_[size_] = kElem;
+    this->str_[size_] = kSymbol;
     this->size_ += 1;
   }
 }
@@ -273,41 +266,7 @@ const char* String::Data() const {
   return this->str_;
 }
 
-String::String(const size_t kSiz, const char& sim) {
-  this->str_ = new char[kSiz + 1];
-  for (size_t i = 0; i < kSiz; ++i) {
-    this->str_[i] = sim;
-  }
-  this->capacity_ = kSiz + 1;
-  this->size_ = kSiz;
-}
-
-String::String() {
-  this->str_ = nullptr;
-  this->capacity_ = 1;
-}
-
-String::String(const String& str) {
-  size_t len = str.Size();
-  this->str_ = new char[len + 1];
-  for (size_t i = 0; i < len; ++i) {
-    this->str_[i] = str.str_[i];
-  }
-  this->capacity_ = len + 1;
-  this->size_ = len;
-}
-
-String::String(const char* str) {
-  int len = strlen(str);
-  this->str_ = new char[len + 1];
-  for (int i = 0; i < len; ++i) {
-    this->str_[i] = str[i];
-  }
-  this->capacity_ = len + 1;
-  this->size_ = len;
-}
-
-String String::Join(const std::vector<String>& vec) const {
+String String::Join(const std::vector<String> &vec) const {
   String result = "";
   if (vec.empty()) {
     return result;
@@ -323,9 +282,11 @@ String String::Join(const std::vector<String>& vec) const {
 
 String::~String() { delete[] str_; }
 
-void String::SplitHelpSize(String& temp, const String& str_div,
-                           size_t& str_point, String& t, vector<String>& ret) {
-  for (int iq = 0; iq < 2; ++iq) {
+void String::SplitHelpSize(String &temp, const String &str_div,
+                           size_t &str_point, String &t, vector<String> &ret) {
+  int pol = 0;
+  int iter = 0;
+  for (int iq = 0; iq < Size(); ++iq) {
     if (t == str_div) {
       for (size_t i = 0; i < str_div.Size(); ++i) {
         temp.PopBack();
@@ -340,56 +301,46 @@ void String::SplitHelpSize(String& temp, const String& str_div,
         }
       }
       temp = t;
+      ++pol;
+      ++iter;
+    }
+    // проверка, что нет str_div, которые идут подряд, если - да,
+    // то удаляем все в одном цикле, если нет, то выходим
+    if (iter == 2 && pol <= 1) {
+      break;
+    } else {
+      pol = 0;
+      iter = 0;
     }
   }
 }
 
-vector<String> String::Split(const String& str_div) {
+vector<String> String::Split(const String &str_div) {
   vector<String> ret;
-  String temp;
-  String t;
+  String str_push;
+  String div_temp;
   if (this->size_ == 0) {
     ret.push_back("");
     return ret;
   }
   for (size_t i = 0; i < str_div.Size(); i++) {
-    t += this->str_[i];
+    div_temp += this->str_[i];
   }
-  temp = t;
-  size_t str_point = temp.Size();
+  str_push = div_temp;
+  size_t str_point = str_push.Size();
   for (; str_point <= Size();) {
-    SplitHelpSize(temp, str_div, str_point, t, ret);
-    temp.PushBack(str_[str_point]);
+    SplitHelpSize(str_push, str_div, str_point, div_temp, ret);
+    str_push.PushBack(str_[str_point]);
     ++str_point;
-    for (size_t k = temp.Size() - str_div.Size(), i = 0; k < temp.Size();
+    for (size_t k = str_push.Size() - str_div.Size(), i = 0; k < str_push.Size();
          ++k, ++i) {
-      t[i] = temp[k];
+      div_temp[i] = str_push[k];
     }
   }
-  temp.PopBack();
-  ret.push_back(temp);
-  temp.Clear();
-  t.Clear();
+  str_push.PopBack();
+  ret.push_back(str_push);
+  str_push.Clear();
+  div_temp.Clear();
   return ret;
 }
 
-//  int main() {
-// // //     String s = "";
-// // //     char ch = 'a';
-// // //     while (ch != '9'){
-// // //       cin >> ch;
-// // //       s.PushBack(ch);
-// // //       cout << s << "\n";
-// // //     }
-//     // vector<String> s = String("aba caba 1").Split();
-//     // vector<String> expected{"aba", "caba", "1"};
-//     // if(expected == s){
-//     //   cout << " + \n";
-//     // }
-//     // for (int i = 0; i < s.size(); ++i) {
-//     //   cout << s[i] << " \n";
-//     // }
-//  std::vector<String> expected{""};
-//   if(expected == String("").Split());
-
-//  }
