@@ -250,11 +250,10 @@ void String::PushBack(const char kSymbol) {
         capacity_ = (capacity_ - 1) * 2 + 1;
       }
       str_[0] = kSymbol;
-      ++size_;
     } else {
       str_[size_] = kSymbol;
-      ++size_;
     }
+    ++size_;
   }
 }
 
