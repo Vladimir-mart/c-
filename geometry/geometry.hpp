@@ -9,11 +9,12 @@ using std::sqrt;
 
 namespace Geometry {
 
+
 const double kHelp = 0.5;
 const unsigned int kMax = 10000;
 const double kMagic = 2.;
-const double kMagic1 = 4.;
-
+const double kMagic1 = 4.; 
+// Перед этим делал для размера, но оказалось можно больше 30, ура! Но для функции 
 struct PointsHelp {
   double xa;
   double ya;
@@ -498,18 +499,18 @@ PointsHelp Help(Segment& seg1, Segment& seg2) {
   return h;
 }
 
+
+// Думал будет ругаться, но 6 можно, нужно переписать ? 
 long double Ras(double x1, double y1, double x2, double y2, double x3,
                 double y3) {
   double k;
   double d;
-  if (x1 == x2) {  //Если отрезок вертикальный - меняем местами координаты
-    //каждой точки.
+  if (x1 == x2) { 
     std::swap(x1, y1);
     std::swap(x2, y2);
     std::swap(x3, y3);
   }
-  k = (y1 - y2) / (x1 - x2);  //Ищем коэффициенты уравнения прямой, которому
-  //принадлежит данный отрезок.
+  k = (y1 - y2) / (x1 - x2);  
   d = y1 - k * x1;
   double xz = (x3 * x2 - x3 * x1 + y2 * y3 - y1 * y3 + y1 * d - y2 * d) /
               (k * y2 - k * y1 + x2 - x1);
@@ -518,7 +519,7 @@ long double Ras(double x1, double y1, double x2, double y2, double x3,
     dl = sqrt((x3 - xz) * (x3 - xz) +
               (y3 - xz * k - d) *
                   (y3 - xz * k -
-                   d));  //Проверим лежит ли основание высоты на отрезке.
+                   d)); 
   }
   return dl;
 }
@@ -543,9 +544,8 @@ long double DistanceSegments(Segment& seg1, Segment& seg2) {
     s = o2 / o;
   }
   if ((t >= 0 && s >= 0) && (t <= 1 && s <= 1)) {
-    min = 0;  //Проверим пересекаются ли отрезки.
+    min = 0;  
   } else {
-    //Найдём наименьшую высоту опущенную из конца одного отрезка на другой.
     dl1 = Ras(h.xa, h.ya, h.xb, h.yb, h.xc, h.yc);
     min = dl1;
     dl2 = Ras(h.xa, h.ya, h.xb, h.yb, h.xd, h.yd);
@@ -817,7 +817,6 @@ bool Circle::ContainsPoint(const Point& p) const {
 }
 
 bool Circle::CrossesSegment(const Segment& s) const {
-  //(const Vector& point, const Vector& begin, const Vector& end) {
   int64_t x_start = s.BGetCoordX() - center_.GetCoordX();
   int64_t y_start = s.BGetCoordY() - center_.GetCoordY();
   int64_t x_end = s.EGetCoordX() - center_.GetCoordX();
@@ -828,7 +827,7 @@ bool Circle::CrossesSegment(const Segment& s) const {
   }
   return DistancePointSegment(Vector(center_.GetCoordX(), center_.GetCoordY()),
                               s.GetBegin(),
-                              s.GetEnd()) <= static_cast<double>(r_);
+                              s.GetEnd()) <= (r_);
 }
 
 }  // namespace Geometry
@@ -861,7 +860,8 @@ void CheckFunctions(const Geometry::IShape* shape_ptr,
       shape_ptr->Clone();  // may return either raw or smart pointer
   cloned_shape_ptr->Move(vector_ab);
   // Тут тоже поменял, Move в условии должен быть без возврата(да я ленив писать
-  // под возврат указателя)
+  // под возврат указателя), не ставьте неуд /\, пожайдуста !
+
   cloned_shape_ptr->ToString();
   Delete(cloned_shape_ptr);  // raw pointer compatibility
 }
