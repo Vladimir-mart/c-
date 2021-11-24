@@ -80,12 +80,16 @@ String& String::operator=(const String& other) {
   return *this;
 }
 
-bool String::operator<=(const String& str) const { return !(*this > str); }
-
-bool String::operator>=(const String& str) const { return !(*this < str); }
-
 bool String::operator==(const String& str) const {
   return !(*this < str || *this > str);
+}
+
+bool operator<=(const String& str2, const String& str1) {
+  return !(str2 > str1);
+}
+
+bool operator>=(const String& str2, const String& str1) {
+  return !(str2 < str1);
 }
 
 bool String::operator!=(const String& str) const { return !(*this == str); }
@@ -336,4 +340,3 @@ vector<String> String::Split(const String& str_div) {
   div_temp.Clear();
   return ret;
 }
- 
