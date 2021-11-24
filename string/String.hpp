@@ -47,8 +47,6 @@ class String {
   const char& Back() const { return this->str_[size_ - 1]; }
   bool Empty() const { return size_ == 0; }
 
-  bool operator<=(const String&) const;
-  bool operator>=(const String&) const;
   bool operator==(const String&) const;
   bool operator!=(const String&) const;
 
@@ -63,8 +61,12 @@ class String {
   char* str_ = nullptr;
   size_t capacity_ = 0;
   size_t size_ = 0;
+  int pol_resize_ = 0;
+  char pol_res_s_ = 0;
 };
 
+bool operator<=(const String&, const String&);
+bool operator>=(const String&, const String&);
 bool operator<(const String&, const String&);
 bool operator>(const String&, const String&);
 
