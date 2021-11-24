@@ -128,24 +128,10 @@ void String::Reserve(size_t new_cap) {
 }
 
 void String::Resize(size_t new_size, char symbol) {
-  if (new_size >= capacity_) {
-    char* strt = new char[new_size + 1];
-    size_t i = 0;
-    for (; i < size_; ++i) {
-      strt[i] = str_[i];
-    }
-    for (size_t j = 0; j < new_size - size_; j++, i++) {
-      strt[i] = symbol;
-    }
-    if (size_ > 0) {
-      delete[] str_;
-    }
-    str_ = strt;
-    size_ = new_size;
-    capacity_ = new_size + 1;
-  } else {
-    size_ = new_size;
-  }
+  pol_resize_ = 1;
+  pol_res_s_ = symbol;
+  Resize(new_size);
+  pol_resize_ = 0;
 }
 
 void String::Resize(size_t new_size) {
@@ -154,6 +140,11 @@ void String::Resize(size_t new_size) {
     size_t i = 0;
     for (; i < size_; ++i) {
       strt[i] = str_[i];
+    }
+    if (pol_resize_ == 1) {
+      for (size_t j = 0; j < new_size - size_; j++, i++) {
+        strt[i] = pol_res_s_;
+      }
     }
     if (size_ > 0) {
       delete[] str_;
@@ -167,7 +158,7 @@ void String::Resize(size_t new_size) {
 }
 
 String& String::operator*=(int m) {
-  (*this) = (*this) * m;
+  *this = *this * m;
   return *this;
 }
 
@@ -345,3 +336,4 @@ vector<String> String::Split(const String& str_div) {
   div_temp.Clear();
   return ret;
 }
+ 
