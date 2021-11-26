@@ -9,12 +9,11 @@ using std::sqrt;
 
 namespace Geometry {
 
-
 const double kHelp = 0.5;
 const unsigned int kMax = 10000;
 const double kMagic = 2.;
-const double kMagic1 = 4.; 
-// Перед этим делал для размера, но оказалось можно больше 30, ура! Но для функции 
+const double kMagic1 = 4.;
+
 struct PointsHelp {
   double xa;
   double ya;
@@ -47,16 +46,13 @@ class Vector {
   Vector& operator-=(const Vector& other);
   Vector& operator*=(long double num);
   Vector& operator-();
-  long double Length() const;
-  long double GetCoordX() const;
-  long double GetCoordY() const;
-  friend long double operator*(const Vector& other1, const Vector& other2);
-  friend long double operator^(const Vector& other1, const Vector& other2);
-  friend std::ostream& operator<<(std::ostream& out, const Vector& other);
+  double Length() const;
+  double GetCoordX() const;
+  double GetCoordY() const;
 
  private:
-  long double x_ = 0;
-  long double y_ = 0;
+  double x_ = 0;
+  double y_ = 0;
 };
 
 long double operator*(const Vector& other1, const Vector& other2);
@@ -109,12 +105,12 @@ Vector& Vector::operator-() {
   return *this;
 }
 
-long double Vector::Length() const {
+double Vector::Length() const {
   return static_cast<long double>(std::pow((x_ * x_ + y_ * y_), kHelp));
 }
 
-long double Vector::GetCoordX() const { return x_; }
-long double Vector::GetCoordY() const { return y_; }
+double Vector::GetCoordX() const { return x_; }
+double Vector::GetCoordY() const { return y_; }
 
 Vector operator-(const Vector& other1, const Vector& other2) {
   Vector res = other1;
@@ -129,26 +125,28 @@ Vector operator+(const Vector& other1, const Vector& other2) {
 }
 
 long double operator*(const Vector& other1, const Vector& other2) {
-  return other1.x_ * other2.x_ + other1.y_ * other2.y_;
+  return other1.GetCoordX() * other2.GetCoordX() +
+         other1.GetCoordY() * other2.GetCoordY();
 }
 
 long double operator^(const Vector& other1, const Vector& other2) {
-  return other1.x_ * other2.y_ - other2.x_ * other1.y_;
+  return other1.GetCoordX() * other2.GetCoordY() -
+         other1.GetCoordY() * other2.GetCoordX();
 }
 
 std::ostream& operator<<(std::ostream& out, const Vector& other) {
-  const long double eps = 1e-10;
+  const long double kEps = 1e-10;
   long double zero = 0;
-  if (std::abs(other.x_ - zero) < eps) {
-    out << std::abs(other.x_);
+  if (std::abs(other.GetCoordX() - zero) < kEps) {
+    out << std::abs(other.GetCoordX());
   } else {
-    out << other.x_;
+    out << other.GetCoordX();
   }
   out << " ";
-  if (std::abs(other.y_ - zero) < eps) {
-    out << std::abs(other.y_);
+  if (std::abs(other.GetCoordY() - zero) < kEps) {
+    out << std::abs(other.GetCoordY());
   } else {
-    out << other.y_;
+    out << other.GetCoordY();
   }
   // out << other.x << " " << other.y;
   return out;
@@ -324,12 +322,12 @@ class Polygon : public IShape {
 
  private:
   std::vector<Vector> p_ = {};
-  int size_;
+  unsigned int size_;
 };
 
 void Polygon::ToString() const {
   std::cout << "Polygon(";
-  for (int i = 0; i < size_; ++i) {
+  for (unsigned int i = 0; i < size_; ++i) {
     std::cout << "Point(" << p_[i].GetCoordX() << ", " << p_[i].GetCoordY()
               << ")";
     if (i != size_ - 1) {
@@ -343,14 +341,14 @@ IShape* Polygon::Clone() const {
   Polygon* p = new Polygon;
   p->p_.reserve(size_);
   p->size_ = this->size_;
-  for (int i = 0; i < size_; ++i) {
+  for (unsigned int i = 0; i < size_; ++i) {
     p->p_[i] = this->p_[i];
   }
   return p;
 }
 
 void Polygon::Move(const Vector& v) {
-  for (int i = 0; i < size_; ++i) {
+  for (unsigned int i = 0; i < size_; ++i) {
     p_[i] += v;
   }
 }
@@ -499,27 +497,40 @@ PointsHelp Help(Segment& seg1, Segment& seg2) {
   return h;
 }
 
+struct ThreePoint {
+  double x1;
+  double y1;
+  double x2;
+  double y2;
+  double x3;
+  double y3;
+  ThreePoint(double x1t, double y1t, double x2t, double y2t, double x3t,
+             double y3t)
+      : x1(x1t), y1(y1t), x2(x2t), y2(y2t), x3(x3t), y3(y3t) {}
+};
 
-// Думал будет ругаться, но 6 можно, нужно переписать ? 
-long double Ras(double x1, double y1, double x2, double y2, double x3,
-                double y3) {
+long double Height(ThreePoint p) {
   double k;
   double d;
-  if (x1 == x2) { 
-    std::swap(x1, y1);
-    std::swap(x2, y2);
-    std::swap(x3, y3);
+  if (p.x1 == p.x2) {  //Если отрезок вертикальный - меняем местами координаты
+    //каждой точки.
+    std::swap(p.x1, p.y1);
+    std::swap(p.x2, p.y2);
+    std::swap(p.x3, p.y3);
   }
-  k = (y1 - y2) / (x1 - x2);  
-  d = y1 - k * x1;
-  double xz = (x3 * x2 - x3 * x1 + y2 * y3 - y1 * y3 + y1 * d - y2 * d) /
-              (k * y2 - k * y1 + x2 - x1);
+  k = (p.y1 - p.y2) /
+      (p.x1 - p.x2);  //Ищем коэффициенты уравнения прямой, которому
+  //принадлежит данный отрезок.
+  d = p.y1 - k * p.x1;
+  double xz = (p.x3 * p.x2 - p.x3 * p.x1 + p.y2 * p.y3 - p.y1 * p.y3 +
+               p.y1 * d - p.y2 * d) /
+              (k * p.y2 - k * p.y1 + p.x2 - p.x1);
   double dl = -1;
-  if ((xz <= x2 && xz >= x1) || (xz <= x1 && xz >= x2)) {
-    dl = sqrt((x3 - xz) * (x3 - xz) +
-              (y3 - xz * k - d) *
-                  (y3 - xz * k -
-                   d)); 
+  if ((xz <= p.x2 && xz >= p.x1) || (xz <= p.x1 && xz >= p.x2)) {
+    dl = sqrt((p.x3 - xz) * (p.x3 - xz) +
+              (p.y3 - xz * k - d) *
+                  (p.y3 - xz * k -
+                   d));  //Проверим лежит ли основание высоты на отрезке.
   }
   return dl;
 }
@@ -531,38 +542,33 @@ long double DistanceSegments(Segment& seg1, Segment& seg2) {
   long double dl3;
   long double dl4;
   long double min = -1;
-  long double o;
-  long double o1;
-  long double o2;
   long double t = -2;
   long double s = -2;
-  o = (h.xb - h.xa) * (-h.yd + h.yc) - (h.yb - h.ya) * (-h.xd + h.xc);
-  o1 = (h.xb - h.xa) * (h.yc - h.ya) - (h.yb - h.ya) * (h.xc - h.xa);
-  o2 = (-h.yd + h.yc) * (h.xc - h.xa) - (-h.xd + h.xc) * (h.yc - h.ya);
+  double o = (h.xb - h.xa) * (-h.yd + h.yc) - (h.yb - h.ya) * (-h.xd + h.xc);
+  double o1 = (h.xb - h.xa) * (h.yc - h.ya) - (h.yb - h.ya) * (h.xc - h.xa);
+  double o2 = (-h.yd + h.yc) * (h.xc - h.xa) - (-h.xd + h.xc) * (h.yc - h.ya);
   if (o != 0) {
     t = o1 / o;
     s = o2 / o;
   }
   if ((t >= 0 && s >= 0) && (t <= 1 && s <= 1)) {
-    min = 0;  
+    min = 0;
   } else {
-    dl1 = Ras(h.xa, h.ya, h.xb, h.yb, h.xc, h.yc);
+    dl1 = Height(ThreePoint(h.xa, h.ya, h.xb, h.yb, h.xc, h.yc));
     min = dl1;
-    dl2 = Ras(h.xa, h.ya, h.xb, h.yb, h.xd, h.yd);
+    dl2 = Height(ThreePoint(h.xa, h.ya, h.xb, h.yb, h.xd, h.yd));
     if ((dl2 < min && dl2 != -1) || min == -1) {
       min = dl2;
     }
-    dl3 = Ras(h.xc, h.yc, h.xd, h.yd, h.xa, h.ya);
+    dl3 = Height(ThreePoint(h.xc, h.yc, h.xd, h.yd, h.xa, h.ya));
     if ((dl3 < min && dl3 != -1) || min == -1) {
       min = dl3;
     }
-    dl4 = Ras(h.xc, h.yc, h.xd, h.yd, h.xb, h.yb);
+    dl4 = Height(ThreePoint(h.xc, h.yc, h.xd, h.yd, h.xb, h.yb));
     if ((dl4 < min && dl4 != -1) || min == -1) {
       min = dl4;
     }
-    if (min == -1) {
-      //В случае, если невозможно опустить высоту найдём минимальное расстояние
-      //между точками.
+    if (min == -1) {  // Минимальное растояние, еслли нет высоты
       dl1 = sqrt((h.xa - h.xc) * (h.xa - h.xc) + (h.ya - h.yc) * (h.ya - h.yc));
       min = dl1;
       dl2 = sqrt((h.xb - h.xd) * (h.xb - h.xd) + (h.yb - h.yd) * (h.yb - h.yd));
@@ -586,7 +592,7 @@ long double DistanceSegments(Segment& seg1, Segment& seg2) {
 class Point : public IShape {
  public:
   Point(){};
-  Point(const int& x, const int& y);
+  Point(const long double& xn, const long double& yn);
   bool ContainsPoint(const Point& p) const;
   void Move(const Vector& v);
   bool CrossesSegment(const Segment& s) const;
@@ -604,7 +610,7 @@ void Point::ToString() const {
   std::cout << "Point(" << x_ << ", " << y_ << ")\n";
 }
 
-Point::Point(const int& xn, const int& yn) {
+Point::Point(const long double& xn, const long double& yn) {
   this->x_ = xn;
   this->y_ = yn;
 }
@@ -729,22 +735,22 @@ bool Line::CrossesSegment(const Segment& s) const {
 
 Polygon::Polygon(std::vector<Point> vector_1) {
   size_ = vector_1.size();
-  p_.reserve(size_);
-  for (int i = 0; i < size_; ++i) {
+  p_.reserve(size_ + 1);
+  for (unsigned int i = 0; i < size_; ++i) {
     Vector k(vector_1[i].GetX(), vector_1[i].GetY());
     p_[i] = k;
   }
 }
 
 int Polygon::InPolygon(int x, int y) const {
-  int i1;
-  int i2;
-  int n;
+  unsigned int i1;
+  unsigned int i2;
+  unsigned int n = 0;
   int s;
   int s1;
   int s2;
   int s3;
-  int flag;
+  int flag = 0;
   for (n = 0; n < size_; n++) {
     flag = 0;
     i1 = n < size_ - 1 ? n + 1 : 0;
@@ -789,7 +795,7 @@ bool Polygon::ContainsPoint(const Point& point) const {
 }
 
 bool Polygon::CrossesSegment(const Segment& s) const {
-  for (int i = 0; i < size_; ++i) {
+  for (unsigned int i = 0; i < size_; ++i) {
     Point p1(p_[i].GetCoordX(), p_[i].GetCoordY());
     Point p2(p_[i + 1].GetCoordX(), p_[i + 1].GetCoordY());
     Segment s_t(p1, p2);
@@ -817,6 +823,7 @@ bool Circle::ContainsPoint(const Point& p) const {
 }
 
 bool Circle::CrossesSegment(const Segment& s) const {
+  //(const Vector& point, const Vector& begin, const Vector& end) {
   int64_t x_start = s.BGetCoordX() - center_.GetCoordX();
   int64_t y_start = s.BGetCoordY() - center_.GetCoordY();
   int64_t x_end = s.EGetCoordX() - center_.GetCoordX();
@@ -827,41 +834,39 @@ bool Circle::CrossesSegment(const Segment& s) const {
   }
   return DistancePointSegment(Vector(center_.GetCoordX(), center_.GetCoordY()),
                               s.GetBegin(),
-                              s.GetEnd()) <= (r_);
+                              s.GetEnd()) <= static_cast<double>(r_);
 }
 
 }  // namespace Geometry
 
 template <class SmartPtrT>
 void Delete(const SmartPtrT& unused) {}
-
 template <class T>
 void Delete(T* ptr) {
   delete ptr;
 }
 
 void CheckFunctions(const Geometry::IShape* shape_ptr,
-                    const Geometry::Point& point_a,
-                    const Geometry::Point& point_b) {
+                    const Geometry::Point& k_point1,
+                    const Geometry::Point& k_point2) {
   std::cout << "Given shape "
-            << (shape_ptr->ContainsPoint(point_a) ? "contains"
-                                                  : "does not contain")
+            << (shape_ptr->ContainsPoint(k_point1) ? "contains"
+                                                   : "does not contain")
             << " point A\n";
 
-  const auto segment_ab = Geometry::Segment(point_a, point_b);
+  const auto kSegmentAb = Geometry::Segment(k_point1, k_point2);
   std::cout << "Given shape "
-            << (shape_ptr->CrossesSegment(segment_ab) ? "crosses"
+            << (shape_ptr->CrossesSegment(kSegmentAb) ? "crosses"
                                                       : "does not cross")
             << " segment AB\n";
 
-  const auto vector_ab = point_b - point_a;
+  const auto kVectorAb = k_point2 - k_point1;
   // Тут поменял, разрешили, не ставьте неуд /\, Move же должна двигать
   auto* cloned_shape_ptr =
       shape_ptr->Clone();  // may return either raw or smart pointer
-  cloned_shape_ptr->Move(vector_ab);
+  cloned_shape_ptr->Move(kVectorAb);
   // Тут тоже поменял, Move в условии должен быть без возврата(да я ленив писать
-  // под возврат указателя), не ставьте неуд /\, пожайдуста !
-
+  // под возврат указателя)
   cloned_shape_ptr->ToString();
   Delete(cloned_shape_ptr);  // raw pointer compatibility
 }
