@@ -1,7 +1,7 @@
 #include "Set.hpp"
 
-#include <random>
 #include <iostream>
+#include <random>
 #include <stack>
 
 using std::stack;
@@ -16,10 +16,11 @@ int Set<Key, C>::GetRandomNumber() {
 }
 
 template <typename Key, typename C>
-Set<Key, C>::Node::Node(const Key& elem): left(nullptr), right(nullptr), val(elem), priority(GetRandomNumber()) {}
+Set<Key, C>::Node::Node(const Key& elem)
+    : left(nullptr), right(nullptr), val(elem), priority(GetRandomNumber()) {}
 
 template <typename Key, typename C>
-size_t Set<Key, C>::GetAmount(Node* root) const{
+size_t Set<Key, C>::GetAmount(Node* root) const {
   return root ? root->amount : 0;
 }
 
@@ -134,7 +135,8 @@ Set<Key, C>::~Set() {
 }
 
 template <typename Key, typename C>
-bool Set<Key, C>::Compare(const Key& elem1, const Key& elem2, const C& comp) const {
+bool Set<Key, C>::Compare(const Key& elem1, const Key& elem2,
+                          const C& comp) const {
   return comp(elem1, elem2);
 }
 
@@ -154,7 +156,8 @@ typename Set<Key, C>::Node* Set<Key, C>::Merge(Node* root1, Node* root2) {
 }
 
 template <typename Key, typename C>
-void Set<Key, C>::Split(Node* root, const Key& elem, Node*& left, Node*& right) {
+void Set<Key, C>::Split(Node* root, const Key& elem, Node*& left,
+                        Node*& right) {
   if (root == nullptr) {
     left = right = nullptr;
   } else if (Compare(root->val, elem)) {
@@ -182,7 +185,9 @@ void Set<Key, C>::Insert(const Key& elem) {
 }
 
 template <typename Key, typename C>
-bool Set<Key, C>::Empty() const { return GetAmount(root_) == 0; }
+bool Set<Key, C>::Empty() const {
+  return GetAmount(root_) == 0;
+}
 
 template <typename Key, typename C>
 bool Set<Key, C>::FindRecursive(Node* root, const Key& elem) const {
