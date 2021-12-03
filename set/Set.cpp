@@ -8,10 +8,10 @@ using std::stack;
 
 template <typename Key, typename C>
 int Set<Key, C>::GetRandomNumber() {
-  const int left_boundary = -1000000;
-  const int right_boundary = 1000000;
+  const int kLeftBoundary = -1000000;
+  const int kRightBoundary = 1000000;
   std::mt19937 gen;
-  std::uniform_int_distribution<> dis(left_boundary, right_boundary);
+  std::uniform_int_distribution<> dis(kLeftBoundary, kRightBoundary);
   return dis(gen);
 }
 
