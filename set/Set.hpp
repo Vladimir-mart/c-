@@ -5,7 +5,7 @@
 
 template <typename Key, typename C = std::less<Key>>
 class Set {
-public:
+ public:
   Set() = default;
   Set(const Set&);
   Set& operator=(const Set&);
@@ -17,7 +17,7 @@ public:
   void Erase(const Key&);
   bool Find(const Key&) const;
 
-private:
+ private:
   struct Node {
     Node(const Key&);
     Node* left = nullptr;
