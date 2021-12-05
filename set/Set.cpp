@@ -1,7 +1,7 @@
 #include "Set.hpp"
 
-#include <iostream>
 #include <functional>
+#include <iostream>
 #include <random>
 #include <stack>
 
