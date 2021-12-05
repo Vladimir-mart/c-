@@ -4,7 +4,7 @@
 
 template <typename Key, typename C = std::less<Key>>
 class Set {
-public:
+ public:
   typedef size_t        SizeType;
   typedef Key           KeyType;
   typedef KeyType       ValueType;
@@ -20,8 +20,8 @@ public:
   void Insert(const ValueType&);
   void Erase(const ValueType&);
   bool Find(const ValueType&) const;
-  
-private:
+
+ private:
   struct Node {
     Node(const Key&);
     Node* left = nullptr;
