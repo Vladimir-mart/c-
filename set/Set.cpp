@@ -18,7 +18,7 @@ int Set<Key, C>::GetRandomNumber() {
 
 template <typename Key, typename C>
 Set<Key, C>::Node::Node(const ValueType& elem)
-: left(nullptr), right(nullptr), val(elem), priority(GetRandomNumber()) {}
+    : left(nullptr), right(nullptr), val(elem), priority(GetRandomNumber()) {}
 
 template <typename Key, typename C>
 typename Set<Key, C>::SizeType Set<Key, C>::GetAmount(Node* root) const {
@@ -225,5 +225,5 @@ void Set<Key, C>::EraseRecursive(Node*& root, const ValueType& elem) {
 template <typename Key, typename C>
 void Set<Key, C>::Erase(const ValueType& elem) {
   EraseRecursive(root_, elem);
-    UpdateAmount(root_);
+  UpdateAmount(root_);
 }
