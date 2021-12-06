@@ -1,45 +1,51 @@
 #pragma once
 
 #include <iostream>
+#include <set>
 
 template <typename Key, typename C = std::less<Key>>
 class Set {
  public:
-  typedef size_t SizeType;
-  typedef Key KeyType;
-  typedef KeyType ValueType;
-  typedef C KeyCompare;
-  typedef KeyCompare ValueCompare;
+  // NO LINT
+  typedef size_t size_type;
+  // NO LINT
+  typedef Key key_type;
+  // NO LINT
+  typedef key_type value_type;
+  // NO LINT
+  typedef C key_compare;
+  // NO LINT
+  typedef key_compare ValueCompare;
   Set() = default;
   Set(const Set&);
   Set& operator=(const Set&);
   ~Set();
-  SizeType Size() const;
+  size_type Size() const;
   bool Empty() const;
   void Clear();
-  void Insert(const ValueType&);
-  void Erase(const ValueType&);
-  bool Find(const ValueType&) const;
+  void Insert(const value_type&);
+  void Erase(const value_type&);
+  bool Find(const value_type&) const;
 
  private:
   struct Node {
     Node(const Key&);
     Node* left = nullptr;
     Node* right = nullptr;
-    ValueType val = 0;
+    value_type val = 0;
     int priority = 0;
-    SizeType amount = 1;
+    size_type amount = 1;
   };
   static int GetRandomNumber();
-  Node* Build(ValueType*, SizeType);
+  Node* Build(value_type*, size_type);
   void Heapify(Node* root);
-  bool Compare(const ValueType&, const ValueType&, const C& comp = C()) const;
-  SizeType GetAmount(Node*) const;
+  bool Compare(const value_type&, const value_type&, const C& comp = C()) const;
+  size_type GetAmount(Node*) const;
   void UpdateAmount(Node*);
-  void EraseRecursive(Node*&, const ValueType&);
+  void EraseRecursive(Node*&, const value_type&);
   void ClearRecursive(Node*);
   Node* Merge(Node*, Node*);
-  void Split(Node*, const ValueType&, Node*&, Node*&);
-  bool FindRecursive(Node*, const ValueType&) const;
+  void Split(Node*, const value_type&, Node*&, Node*&);
+  bool FindRecursive(Node*, const value_type&) const;
   Node* root_ = nullptr;
 };
