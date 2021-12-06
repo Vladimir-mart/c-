@@ -6,7 +6,7 @@
 template <typename Key, typename C = std::less<Key>>
 class Set {
  public:
-  \\ NO LINT
+  // NO LINT
   typedef size_t size_type;
   typedef Key key_type;
   typedef key_type value_type;
