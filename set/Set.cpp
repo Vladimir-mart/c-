@@ -1,12 +1,5 @@
 #include "Set.hpp"
 
-#include <functional>
-#include <iostream>
-#include <random>
-#include <stack>
-
-using std::stack;
-
 template <typename Key, typename C>
 int Set<Key, C>::GetRandomNumber() {
   const int kLeftBoundary = -1000000;
@@ -21,7 +14,7 @@ Set<Key, C>::Node::Node(const Key& elem)
     : left(nullptr), right(nullptr), val(elem), priority(GetRandomNumber()) {}
 
 template <typename Key, typename C>
-typename Set<Key, C>::size_type Set<Key, C>::GetAmount(Node* root) const {
+size_t Set<Key, C>::GetAmount(Node* root) const {
   return root ? root->amount : 0;
 }
 
@@ -50,11 +43,11 @@ void Set<Key, C>::Heapify(Node* root) {
   }
 }
 template <typename Key, typename C>
-typename Set<Key, C>::Node* Set<Key, C>::Build(Key* arr, size_type sz) {
+typename Set<Key, C>::Node* Set<Key, C>::Build(Key* arr, size_t sz) {
   if (sz == 0) {
     return nullptr;
   }
-  size_type mid = sz / 2;
+  size_t mid = sz / 2;
   Node* new_root = new Node(arr[mid]);
   new_root->left = Build(arr, mid);
   new_root->right = Build(arr + mid + 1, sz - mid - 1);
@@ -66,7 +59,7 @@ typename Set<Key, C>::Node* Set<Key, C>::Build(Key* arr, size_type sz) {
 template <typename Key, typename C>
 Set<Key, C>::Set(const Set& st) {
   Key* arr = new Key[st.Size()];
-  size_type counter = 0;
+  size_t counter = 0;
   stack<Node*> s;
   Node* temp = st.root_;
   while (temp || !s.empty()) {
@@ -91,7 +84,7 @@ Set<Key, C>& Set<Key, C>::operator=(const Set& st) {
   }
   ClearRecursive(root_);
   Key* arr = new Key[st.Size()];
-  size_type counter = 0;
+  size_t counter = 0;
   stack<Node*> s;
   Node* temp = st.root_;
   while (temp || !s.empty()) {
@@ -111,7 +104,7 @@ Set<Key, C>& Set<Key, C>::operator=(const Set& st) {
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::size_type Set<Key, C>::Size() const {
+size_t Set<Key, C>::Size() const {
   return GetAmount(root_);
 }
 
