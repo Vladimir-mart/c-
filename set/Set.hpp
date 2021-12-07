@@ -4,7 +4,6 @@
 #include <iostream>
 #include <random>
 #include <stack>
-#include <set>
 
 using std::stack;
 
