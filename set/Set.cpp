@@ -17,7 +17,7 @@ int Set<Key, C>::GetRandomNumber() {
 }
 
 template <typename Key, typename C>
-Set<Key, C>::Node::Node(const value_type& elem)
+Set<Key, C>::Node::Node(const Key& elem)
     : left(nullptr), right(nullptr), val(elem), priority(GetRandomNumber()) {}
 
 template <typename Key, typename C>
@@ -50,7 +50,7 @@ void Set<Key, C>::Heapify(Node* root) {
   }
 }
 template <typename Key, typename C>
-typename Set<Key, C>::Node* Set<Key, C>::Build(value_type* arr, size_type sz) {
+typename Set<Key, C>::Node* Set<Key, C>::Build(Key* arr, size_type sz) {
   if (sz == 0) {
     return nullptr;
   }
@@ -65,7 +65,7 @@ typename Set<Key, C>::Node* Set<Key, C>::Build(value_type* arr, size_type sz) {
 
 template <typename Key, typename C>
 Set<Key, C>::Set(const Set& st) {
-  value_type* arr = new value_type[st.Size()];
+  Key* arr = new Key[st.Size()];
   size_type counter = 0;
   stack<Node*> s;
   Node* temp = st.root_;
@@ -90,7 +90,7 @@ Set<Key, C>& Set<Key, C>::operator=(const Set& st) {
     return *this;
   }
   ClearRecursive(root_);
-  value_type* arr = new value_type[st.Size()];
+  Key* arr = new Key[st.Size()];
   size_type counter = 0;
   stack<Node*> s;
   Node* temp = st.root_;
@@ -136,7 +136,7 @@ Set<Key, C>::~Set() {
 }
 
 template <typename Key, typename C>
-bool Set<Key, C>::Compare(const value_type& elem1, const value_type& elem2,
+bool Set<Key, C>::Compare(const Key& elem1, const Key& elem2,
                           const C& comp) const {
   return comp(elem1, elem2);
 }
@@ -157,7 +157,7 @@ typename Set<Key, C>::Node* Set<Key, C>::Merge(Node* root1, Node* root2) {
 }
 
 template <typename Key, typename C>
-void Set<Key, C>::Split(Node* root, const value_type& elem, Node*& left,
+void Set<Key, C>::Split(Node* root, const Key& elem, Node*& left,
                         Node*& right) {
   if (root == nullptr) {
     left = right = nullptr;
@@ -173,7 +173,7 @@ void Set<Key, C>::Split(Node* root, const value_type& elem, Node*& left,
 }
 
 template <typename Key, typename C>
-void Set<Key, C>::Insert(const value_type& elem) {
+void Set<Key, C>::Insert(const Key& elem) {
   if (FindRecursive(root_, elem)) {
     return;
   }
@@ -191,7 +191,7 @@ bool Set<Key, C>::Empty() const {
 }
 
 template <typename Key, typename C>
-bool Set<Key, C>::FindRecursive(Node* root, const value_type& elem) const {
+bool Set<Key, C>::FindRecursive(Node* root, const Key& elem) const {
   if (root == nullptr || root->val == elem) {
     return root ? root->val == elem : false;
   }
@@ -202,12 +202,12 @@ bool Set<Key, C>::FindRecursive(Node* root, const value_type& elem) const {
 }
 
 template <typename Key, typename C>
-bool Set<Key, C>::Find(const value_type& elem) const {
+bool Set<Key, C>::Find(const Key& elem) const {
   return FindRecursive(root_, elem);
 }
 
 template <typename Key, typename C>
-void Set<Key, C>::EraseRecursive(Node*& root, const value_type& elem) {
+void Set<Key, C>::EraseRecursive(Node*& root, const Key& elem) {
   if (root == nullptr) {
     return;
   }
@@ -223,7 +223,7 @@ void Set<Key, C>::EraseRecursive(Node*& root, const value_type& elem) {
 }
 
 template <typename Key, typename C>
-void Set<Key, C>::Erase(const value_type& elem) {
+void Set<Key, C>::Erase(const Key& elem) {
   EraseRecursive(root_, elem);
   UpdateAmount(root_);
 }
