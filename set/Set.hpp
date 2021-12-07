@@ -4,6 +4,7 @@
 #include <iostream>
 #include <random>
 #include <stack>
+#include <set>
 
 using std::stack;
 
@@ -22,9 +23,9 @@ class Set {
   size_type Size() const;
   bool Empty() const;
   void Clear();
-  void Insert(const value_type&);
-  void Erase(const value_type&);
-  bool Find(const value_type&) const;
+  void Insert(const Key&);
+  void Erase(const Key&);
+  bool Find(const Key&) const;
 
  private:
   struct Node {
@@ -33,18 +34,18 @@ class Set {
     Node* right = nullptr;
     value_type val = 0;
     int priority = 0;
-    size_type amount = 1;
+    size_t amount = 1;
   };
   static int GetRandomNumber();
-  Node* Build(value_type*, size_type);
+  Node* Build(Key*, size_t);
   void Heapify(Node* root);
-  bool Compare(const value_type&, const value_type&, const C& comp = C()) const;
-  size_type GetAmount(Node*) const;
+  bool Compare(const Key&, const Key&, const C& comp = C()) const;
+  size_t GetAmount(Node*) const;
   void UpdateAmount(Node*);
-  void EraseRecursive(Node*&, const value_type&);
+  void EraseRecursive(Node*&, const Key&);
   void ClearRecursive(Node*);
   Node* Merge(Node*, Node*);
-  void Split(Node*, const value_type&, Node*&, Node*&);
-  bool FindRecursive(Node*, const value_type&) const;
+  void Split(Node*, const Key&, Node*&, Node*&);
+  bool FindRecursive(Node*, const Key&) const;
   Node* root_ = nullptr;
 };
