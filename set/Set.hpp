@@ -1,7 +1,11 @@
 #pragma once
 
+#include <functional>
 #include <iostream>
-#include <set>
+#include <random>
+#include <stack>
+
+using std::stack;
 
 template <typename Key, typename C = std::less<Key>>
 class Set {
