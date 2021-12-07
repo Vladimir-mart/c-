@@ -6,16 +6,11 @@
 template <typename Key, typename C = std::less<Key>>
 class Set {
  public:
-  // nolint
-  typedef size_t size_type;
-  // nolint
-  typedef Key key_type;
-  // nolint
-  typedef key_type value_type;
-  // nolint
-  typedef C key_compare;
-  // nolint
-  typedef key_compare ValueCompare;
+  typedef size_t size_type; // NOLINT
+  typedef Key key_type; // NOLINT
+  typedef key_type value_type; // NOLINT
+  typedef C key_compare; // NOLINT
+  typedef key_compare ValueCompare; // NOLINT
   Set() = default;
   Set(const Set&);
   Set& operator=(const Set&);
