@@ -17,19 +17,19 @@ class Set {
   typedef C key_compare;              // NOLINT
   typedef key_compare value_compare;  // NOLINT
   Set() = default;
-  Set(const Set&);
-  Set& operator=(const Set&);
+  Set(const Set& st);
+  Set& operator=(const Set& st);
   ~Set();
   size_type Size() const;
   bool Empty() const;
   void Clear();
-  void Insert(const Key&);
-  void Erase(const Key&);
-  bool Find(const Key&) const;
+  void Insert(const Key& elem);
+  void Erase(const Key& elem);
+  bool Find(const Key& elem) const;
 
  private:
   struct Node {
-    Node(const Key&);
+    Node(const Key& elem);
     Node* left = nullptr;
     Node* right = nullptr;
     value_type val = 0;
@@ -37,16 +37,16 @@ class Set {
     size_t amount = 1;
   };
   static int GetRandomNumber();
-  Node* Build(Key*, size_t);
+  Node* Build(Key* arr, size_t sz);
   void Heapify(Node* root);
-  bool Compare(const Key&, const Key&, const C& comp = C()) const;
-  size_t GetAmount(Node*) const;
-  void UpdateAmount(Node*);
-  void EraseRecursive(Node*&, const Key&);
-  void ClearRecursive(Node*);
-  Node* Merge(Node*, Node*);
+  bool Compare(const Key& elem1, const Key& elem2, const C& comp = C()) const;
+  size_t GetAmount(Node* root) const;
+  void UpdateAmount(Node* root);
+  void EraseRecursive(Node*& root, const Key& elem);
+  void ClearRecursive(Node* root);
+  Node* Merge(Node* root1, Node* root2);
   void Split(Node*, const Key&, Node*&, Node*&);
-  bool FindRecursive(Node*, const Key&) const;
+  bool FindRecursive(Node* root, const Key& elem) const;
   Node* root_ = nullptr;
 };
 
