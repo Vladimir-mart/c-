@@ -11,8 +11,6 @@ namespace Geometry {
 
 const double kHelp = 0.5;
 const unsigned int kMax = 10000;
-const double kMagic = 2.;
-const double kMagic1 = 4.;
 
 struct PointsHelp {
   double xa;
@@ -309,11 +307,21 @@ void Circle::Move(const Vector& v) { center_ += v; }
 
 // Polygon
 
+struct HelpSizePolygon {
+  unsigned int i1 = 0;
+  unsigned int i2 = 0;
+  int s = 0;
+  int s1 = 0;
+  int s2 = 0;
+  int s3 = 0;
+};
+
 class Polygon : public IShape {
  public:
   Polygon() = default;
   Polygon(std::vector<Point> vector_1);
   int InPolygon(int x, int y) const;
+  bool InPolygonHelpSize(int x, int y, HelpSizePolygon h, unsigned int n) const;
   bool ContainsPoint(const Point& point) const;
   void Move(const Vector& v);
   bool CrossesSegment(const Segment& s) const;
@@ -535,13 +543,64 @@ long double Height(ThreePoint p) {
   return dl;
 }
 
+struct SegLen {
+  long double len_segm1;
+  long double len_segm2;
+  long double len_segm3;
+  long double len_segm4;
+};
+
+// HelpHelp
+void DisSizHelpHelpSize(PointsHelp h, SegLen& d, long double& min) {
+  d.len_segm1 = Height(ThreePoint(h.xa, h.ya, h.xb, h.yb, h.xc, h.yc));
+  min = d.len_segm1;
+  d.len_segm2 = Height(ThreePoint(h.xa, h.ya, h.xb, h.yb, h.xd, h.yd));
+  if ((d.len_segm2 < min && d.len_segm2 != -1) || min == -1) {
+    min = d.len_segm2;
+  }
+  d.len_segm3 = Height(ThreePoint(h.xc, h.yc, h.xd, h.yd, h.xa, h.ya));
+  if ((d.len_segm3 < min && d.len_segm3 != -1) || min == -1) {
+    min = d.len_segm3;
+  }
+  d.len_segm4 = Height(ThreePoint(h.xc, h.yc, h.xd, h.yd, h.xb, h.yb));
+  if ((d.len_segm4 < min && d.len_segm4 != -1) || min == -1) {
+    min = d.len_segm4;
+  }
+}
+
+long double DisSizHelpSize(PointsHelp h, long double s, long double t) {
+  long double min = -1;
+  SegLen d;
+  if ((t >= 0 && s >= 0) && (t <= 1 && s <= 1)) {
+    min = 0;
+  } else {
+    DisSizHelpHelpSize(h, d, min);
+    if (min == -1) {  // Минимальное растояние, еслли нет высоты
+      d.len_segm1 =
+          sqrt((h.xa - h.xc) * (h.xa - h.xc) + (h.ya - h.yc) * (h.ya - h.yc));
+      min = d.len_segm1;
+      d.len_segm2 =
+          sqrt((h.xb - h.xd) * (h.xb - h.xd) + (h.yb - h.yd) * (h.yb - h.yd));
+      if (d.len_segm2 < min) {
+        min = d.len_segm2;
+      }
+      d.len_segm3 =
+          sqrt((h.xb - h.xc) * (h.xb - h.xc) + (h.yb - h.yc) * (h.yb - h.yc));
+      if (d.len_segm3 < min) {
+        min = d.len_segm3;
+      }
+      d.len_segm4 =
+          sqrt((h.xa - h.xd) * (h.xa - h.xd) + (h.ya - h.yd) * (h.ya - h.yd));
+      if (d.len_segm4 < min) {
+        min = d.len_segm4;
+      }
+    }
+  }
+  return min;
+}
+
 long double DistanceSegments(Segment& seg1, Segment& seg2) {
   PointsHelp h = Help(seg1, seg2);
-  long double dl1;
-  long double dl2;
-  long double dl3;
-  long double dl4;
-  long double min = -1;
   long double t = -2;
   long double s = -2;
   double o = (h.xb - h.xa) * (-h.yd + h.yc) - (h.yb - h.ya) * (-h.xd + h.xc);
@@ -551,41 +610,7 @@ long double DistanceSegments(Segment& seg1, Segment& seg2) {
     t = o1 / o;
     s = o2 / o;
   }
-  if ((t >= 0 && s >= 0) && (t <= 1 && s <= 1)) {
-    min = 0;
-  } else {
-    dl1 = Height(ThreePoint(h.xa, h.ya, h.xb, h.yb, h.xc, h.yc));
-    min = dl1;
-    dl2 = Height(ThreePoint(h.xa, h.ya, h.xb, h.yb, h.xd, h.yd));
-    if ((dl2 < min && dl2 != -1) || min == -1) {
-      min = dl2;
-    }
-    dl3 = Height(ThreePoint(h.xc, h.yc, h.xd, h.yd, h.xa, h.ya));
-    if ((dl3 < min && dl3 != -1) || min == -1) {
-      min = dl3;
-    }
-    dl4 = Height(ThreePoint(h.xc, h.yc, h.xd, h.yd, h.xb, h.yb));
-    if ((dl4 < min && dl4 != -1) || min == -1) {
-      min = dl4;
-    }
-    if (min == -1) {  // Минимальное растояние, еслли нет высоты
-      dl1 = sqrt((h.xa - h.xc) * (h.xa - h.xc) + (h.ya - h.yc) * (h.ya - h.yc));
-      min = dl1;
-      dl2 = sqrt((h.xb - h.xd) * (h.xb - h.xd) + (h.yb - h.yd) * (h.yb - h.yd));
-      if (dl2 < min) {
-        min = dl2;
-      }
-      dl3 = sqrt((h.xb - h.xc) * (h.xb - h.xc) + (h.yb - h.yc) * (h.yb - h.yc));
-      if (dl3 < min) {
-        min = dl3;
-      }
-      dl4 = sqrt((h.xa - h.xd) * (h.xa - h.xd) + (h.ya - h.yd) * (h.ya - h.yd));
-      if (dl4 < min) {
-        min = dl4;
-      }
-    }
-  }
-  return min;
+  return DisSizHelpSize(h, s, t);
 }
 
 // Point
@@ -742,45 +767,45 @@ Polygon::Polygon(std::vector<Point> vector_1) {
   }
 }
 
+bool Polygon::InPolygonHelpSize(int x, int y, HelpSizePolygon h,
+                                unsigned int n) const {
+  h.s = abs(p_[h.i1].GetCoordX() * (p_[h.i2].GetCoordY() - p_[n].GetCoordY()) +
+            p_[h.i2].GetCoordX() * (p_[n].GetCoordY() - p_[h.i1].GetCoordY()) +
+            p_[n].GetCoordX() * (p_[h.i1].GetCoordY() - p_[h.i2].GetCoordY()));
+  h.s1 = abs(p_[h.i1].GetCoordX() * (p_[h.i2].GetCoordY() - y) +
+             p_[h.i2].GetCoordX() * (y - p_[h.i1].GetCoordY()) +
+             x * (p_[h.i1].GetCoordY() - p_[h.i2].GetCoordY()));
+  h.s2 = abs(p_[n].GetCoordX() * (p_[h.i2].GetCoordY() - y) +
+             p_[h.i2].GetCoordX() * (y - p_[n].GetCoordY()) +
+             x * (p_[n].GetCoordY() - p_[h.i2].GetCoordY()));
+  h.s3 = abs(p_[h.i1].GetCoordX() * (p_[n].GetCoordY() - y) +
+             p_[n].GetCoordX() * (y - p_[h.i1].GetCoordY()) +
+             x * (p_[h.i1].GetCoordY() - p_[n].GetCoordY()));
+  return h.s == h.s1 + h.s2 + h.s3;
+}
+
 int Polygon::InPolygon(int x, int y) const {
-  unsigned int i1;
-  unsigned int i2;
+  HelpSizePolygon h;
   unsigned int n = 0;
-  int s;
-  int s1;
-  int s2;
-  int s3;
   int flag = 0;
   for (n = 0; n < size_; n++) {
     flag = 0;
-    i1 = n < size_ - 1 ? n + 1 : 0;
+    h.i1 = n < size_ - 1 ? n + 1 : 0;
     while (flag == 0) {
-      i2 = i1 + 1;
-      if (i2 >= size_) {
-        i2 = 0;
+      h.i2 = h.i1 + 1;
+      if (h.i2 >= size_) {
+        h.i2 = 0;
       }
-      if (i2 == (n < size_ - 1 ? n + 1 : 0)) {
+      if (h.i2 == (n < size_ - 1 ? n + 1 : 0)) {
         break;
       }
-      s = abs(p_[i1].GetCoordX() * (p_[i2].GetCoordY() - p_[n].GetCoordY()) +
-              p_[i2].GetCoordX() * (p_[n].GetCoordY() - p_[i1].GetCoordY()) +
-              p_[n].GetCoordX() * (p_[i1].GetCoordY() - p_[i2].GetCoordY()));
-      s1 = abs(p_[i1].GetCoordX() * (p_[i2].GetCoordY() - y) +
-               p_[i2].GetCoordX() * (y - p_[i1].GetCoordY()) +
-               x * (p_[i1].GetCoordY() - p_[i2].GetCoordY()));
-      s2 = abs(p_[n].GetCoordX() * (p_[i2].GetCoordY() - y) +
-               p_[i2].GetCoordX() * (y - p_[n].GetCoordY()) +
-               x * (p_[n].GetCoordY() - p_[i2].GetCoordY()));
-      s3 = abs(p_[i1].GetCoordX() * (p_[n].GetCoordY() - y) +
-               p_[n].GetCoordX() * (y - p_[i1].GetCoordY()) +
-               x * (p_[i1].GetCoordY() - p_[n].GetCoordY()));
-      if (s == s1 + s2 + s3) {
+      if (InPolygonHelpSize(x, y, h, n)) {
         flag = 1;
         break;
       }
-      i1++;
-      if (i1 >= size_) {
-        i1 = 0;
+      h.i1++;
+      if (h.i1 >= size_) {
+        h.i1 = 0;
       }
     }
     if (flag == 0) {
@@ -840,7 +865,10 @@ bool Circle::CrossesSegment(const Segment& s) const {
 }  // namespace Geometry
 
 template <class SmartPtrT>
-void Delete(const SmartPtrT& unused) {}
+void Delete(const SmartPtrT& unused) {
+  // unused parameter 'unused' or add /*unused*/
+  unused = 0;
+}
 template <class T>
 void Delete(T* ptr) {
   delete ptr;
@@ -870,3 +898,4 @@ void CheckFunctions(const Geometry::IShape* shape_ptr,
   cloned_shape_ptr->ToString();
   Delete(cloned_shape_ptr);  // raw pointer compatibility
 }
+int main() { return 0; }
