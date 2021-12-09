@@ -898,4 +898,3 @@ void CheckFunctions(const Geometry::IShape* shape_ptr,
   cloned_shape_ptr->ToString();
   Delete(cloned_shape_ptr);  // raw pointer compatibility
 }
-int main() { return 0; }
