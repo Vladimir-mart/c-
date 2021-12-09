@@ -4,7 +4,6 @@
 #include <iostream>
 #include <random>
 #include <stack>
-#include <set>
 
 using std::stack;
 
@@ -61,7 +60,7 @@ int Set<Key, C>::GetRandomNumber() {
 
 template <typename Key, typename C>
 Set<Key, C>::Node::Node(const Key& elem)
-: left(nullptr), right(nullptr), val(elem), priority(GetRandomNumber()) {}
+    : left(nullptr), right(nullptr), val(elem), priority(GetRandomNumber()) {}
 
 template <typename Key, typename C>
 size_t Set<Key, C>::GetAmount(Node* root) const {
