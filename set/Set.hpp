@@ -45,7 +45,7 @@ class Set {
   void EraseRecursive(Node*& root, const Key& elem);
   void ClearRecursive(Node* root);
   Node* Merge(Node* root1, Node* root2);
-  void Split(Node*, const Key&, Node*&, Node*&);
+  void Split(Node* root, const Key& elem, Node*& left, Node*& right);
   bool FindRecursive(Node* root, const Key& elem) const;
   Node* root_ = nullptr;
 };
