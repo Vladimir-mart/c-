@@ -26,20 +26,20 @@ public:
   
 private:
   struct Node {
-    Node(const Key& val);
+    Node(const Key& elem);
     Node* left = nullptr;
     Node* right = nullptr;
     size_t height;
     Key val;
   };
   Node* root_ = nullptr;
-  size_t size = 0;
-  bool increase = false;
-  bool decrease = false;
+  size_t size_ = 0;
+  bool increase_ = false;
+  bool decrease_ = false;
   bool Compare(const Key& elem1, const Key& elem2, const C& comp = C()) const;
   void InorderRecursive(Node* root);
   Node* FindMin(Node* root);
-  Node* RemoveMin(Node* min_node);
+  Node* RemoveMin(Node* root);
   Node* EraseRecursive(Node* root, const Key& elem);
   void ClearRecursive(Node* root);
   Node* InsertRecursive(Node* root, const Key& val);
@@ -166,13 +166,13 @@ typename Set<Key, C>::Node* Set<Key, C>::RightRotation(Node* node) {
 template <typename Key, typename C>
 typename Set<Key, C>::Node* Set<Key, C>::InsertRecursive(Node* root, const Key& val) {
   if (root == nullptr) {
-    increase = true;
+    increase_ = true;
     return new Node(val);
   }
   if (Compare(val, root->val)) {
     root->left = InsertRecursive(root->left, val);
   } else if (root->val == val){
-    increase = false;
+    increase_ = false;
     return Balance(root);
   } else {
     root->right = InsertRecursive(root->right, val);
@@ -181,10 +181,10 @@ typename Set<Key, C>::Node* Set<Key, C>::InsertRecursive(Node* root, const Key& 
 }
 
 template <typename Key, typename C>
-void Set<Key, C>::Insert(const Key& val) {
-  root_ = InsertRecursive(root_, val);
-  if (increase) {
-    ++size;
+void Set<Key, C>::Insert(const Key& elem) {
+  root_ = InsertRecursive(root_, elem);
+  if (increase_) {
+    ++size_;
   }
 }
 
@@ -206,7 +206,7 @@ template <typename Key, typename C>
 void Set<Key, C>::Clear() {
   ClearRecursive(root_);
   root_ = nullptr;
-  size = 0;
+  size_ = 0;
 }
 
 template <typename Key, typename C>
@@ -226,7 +226,7 @@ typename Set<Key, C>::Node* Set<Key, C>::RemoveMin(Node* root) {
 template <typename Key, typename C>
 typename Set<Key, C>::Node* Set<Key, C>::EraseRecursive(Node* root, const Key& elem) {
   if (root == nullptr) {
-    decrease = false;
+    decrease_= false;
     return nullptr;
   }
   if (elem < root->val) {
@@ -234,7 +234,7 @@ typename Set<Key, C>::Node* Set<Key, C>::EraseRecursive(Node* root, const Key& e
   } else if (elem > root->val) {
     root->right = EraseRecursive(root->right, elem);
   } else {
-    decrease = true;
+    decrease_= true;
     Node* left = root->left;
     Node* right = root->right;
     delete root;
@@ -252,8 +252,8 @@ typename Set<Key, C>::Node* Set<Key, C>::EraseRecursive(Node* root, const Key& e
 template <typename Key, typename C>
 void Set<Key, C>::Erase(const Key& elem) {
   root_ = EraseRecursive(root_, elem);
-  if (decrease) {
-    --size;
+  if (decrease_) {
+    --size_;
   }
 }
 
@@ -282,7 +282,7 @@ bool Set<Key, C>::IsFind(const Key& val) {
 
 template <typename Key, typename C>
 size_t Set<Key, C>::Size() {
-  return size;
+  return size_;
 }
 
 template <typename Key, typename C>
