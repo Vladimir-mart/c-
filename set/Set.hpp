@@ -5,11 +5,9 @@
 #include <random>
 #include <stack>
 
-using std::stack;
-
 template <typename Key, typename C = std::less<Key>>
 class Set {
- public:
+public:
   typedef size_t size_type;           // NOLINT
   typedef Key key_type;               // NOLINT
   typedef key_type value_type;        // NOLINT
@@ -19,111 +17,74 @@ class Set {
   Set(const Set& st);
   Set& operator=(const Set& st);
   ~Set();
-  size_type Size() const;
-  bool Empty() const;
-  void Clear();
   void Insert(const Key& elem);
+  void Clear();
   void Erase(const Key& elem);
-  bool Find(const Key& elem) const;
-
- private:
+  bool IsFind(const Key& val);
+  size_t Size();
+  void Inorder();
+  
+private:
   struct Node {
-    Node(const Key& elem);
+    Node(const Key& val);
     Node* left = nullptr;
     Node* right = nullptr;
-    value_type val = 0;
-    int priority = 0;
-    size_t amount = 1;
+    size_t height;
+    Key val;
   };
-  static int GetRandomNumber();
-  Node* Build(Key* arr, size_t sz);
-  void Heapify(Node* root);
-  bool Compare(const Key& elem1, const Key& elem2, const C& comp = C()) const;
-  size_t GetAmount(Node* root) const;
-  void UpdateAmount(Node* root);
-  void EraseRecursive(Node*& root, const Key& elem);
-  void ClearRecursive(Node* root);
-  Node* Merge(Node* root1, Node* root2);
-  void Split(Node* root, const Key& elem, Node*& left, Node*& right);
-  bool FindRecursive(Node* root, const Key& elem) const;
   Node* root_ = nullptr;
+  size_t size = 0;
+  bool increase = false;
+  bool decrease = false;
+  bool Compare(const Key& elem1, const Key& elem2, const C& comp = C()) const;
+  void InorderRecursive(Node* root);
+  Node* FindMin(Node* root);
+  Node* RemoveMin(Node* min_node);
+  Node* EraseRecursive(Node* root, const Key& elem);
+  void ClearRecursive(Node* root);
+  Node* InsertRecursive(Node* root, const Key& val);
+  size_t HeightDefine(Node* node);
+  int BalanceFactor(Node* node);
+  void HeightFix(Node* node);
+  Node* Balance(Node* node);
+  Node* LeftRotation(Node* node);
+  Node* RightRotation(Node* node);
+  bool FindElem(Node* node, const Key& val);
 };
 
 template <typename Key, typename C>
-int Set<Key, C>::GetRandomNumber() {
-  const int kLeftBoundary = -1000000;
-  const int kRightBoundary = 1000000;
-  std::mt19937 gen;
-  std::uniform_int_distribution<> dis(kLeftBoundary, kRightBoundary);
-  return dis(gen);
-}
-
-template <typename Key, typename C>
 Set<Key, C>::Node::Node(const Key& elem)
-    : left(nullptr), right(nullptr), val(elem), priority(GetRandomNumber()) {}
+    : left(nullptr), right(nullptr), val(elem), height(1) {}
 
 template <typename Key, typename C>
-size_t Set<Key, C>::GetAmount(Node* root) const {
-  return root ? root->amount : 0;
+bool Set<Key, C>::Compare(const Key& elem1, const Key& elem2,
+                          const C& comp) const {
+  return comp(elem1, elem2);
 }
 
 template <typename Key, typename C>
-void Set<Key, C>::UpdateAmount(Node* root) {
-  if (root) {
-    root->amount = 1 + GetAmount(root->left) + GetAmount(root->right);
-  }
-}
-
-template <typename Key, typename C>
-void Set<Key, C>::Heapify(Node* root) {
-  if (root == nullptr) {
-    return;
-  }
-  Node* max = root;
-  if (root->left && root->left->priority > max->priority) {
-    max = root->left;
-  }
-  if (root->right && root->right->priority > max->priority) {
-    max = root->right;
-  }
-  if (root != max) {
-    std::swap(root->priority, max->priority);
-    Heapify(max);
-  }
-}
-template <typename Key, typename C>
-typename Set<Key, C>::Node* Set<Key, C>::Build(Key* arr, size_t sz) {
-  if (sz == 0) {
-    return nullptr;
-  }
-  size_t mid = sz / 2;
-  Node* new_root = new Node(arr[mid]);
-  new_root->left = Build(arr, mid);
-  new_root->right = Build(arr + mid + 1, sz - mid - 1);
-  Heapify(new_root);
-  UpdateAmount(new_root);
-  return new_root;
+size_t Set<Key, C>::HeightDefine(Node* node) {
+  return node ? node->height : 0;
 }
 
 template <typename Key, typename C>
 Set<Key, C>::Set(const Set& st) {
-  Key* arr = new Key[st.Size()];
-  size_t counter = 0;
-  stack<Node*> s;
-  Node* temp = st.root_;
-  while (temp || !s.empty()) {
-    while (temp) {
-      s.push(temp);
-      temp = temp->left;
+  std::vector<Key> vec;
+  std::stack<Node*> s;
+  Node* curr = st.root_;
+  while (!s.empty() || curr) {
+    while (curr) {
+      s.push(curr);
+      curr = curr->left;
     }
     Node* popped = s.top();
     s.pop();
-    arr[counter] = popped->val;
-    ++counter;
-    temp = popped->right;
+    vec.push_back(popped->val);
+    curr = popped->right;
   }
-  root_ = Build(arr, st.Size());
-  delete[] arr;
+  for (size_t i = 0; i < vec.size(); ++i) {
+    Insert(vec[i]);
+  }
 }
 
 template <typename Key, typename C>
@@ -131,30 +92,105 @@ Set<Key, C>& Set<Key, C>::operator=(const Set& st) {
   if (root_ == st.root_) {
     return *this;
   }
-  ClearRecursive(root_);
-  Key* arr = new Key[st.Size()];
-  size_t counter = 0;
-  stack<Node*> s;
-  Node* temp = st.root_;
-  while (temp || !s.empty()) {
-    while (temp) {
-      s.push(temp);
-      temp = temp->left;
+  Clear();
+  std::vector<Key> vec;
+  std::stack<Node*> s;
+  Node* curr = st.root_;
+  while (!s.empty() || curr) {
+    while (curr) {
+      s.push(curr);
+      curr = curr->left;
     }
     Node* popped = s.top();
     s.pop();
-    arr[counter] = popped->val;
-    ++counter;
-    temp = popped->right;
+    vec.push_back(popped->val);
+    curr = popped->right;
   }
-  root_ = Build(arr, st.Size());
-  delete[] arr;
+  for (size_t i = 0; i < vec.size(); ++i) {
+    Insert(vec[i]);
+  }
   return *this;
 }
 
 template <typename Key, typename C>
-size_t Set<Key, C>::Size() const {
-  return GetAmount(root_);
+int Set<Key, C>::BalanceFactor(Node* node) {
+  return static_cast<int>((node->right ? node->right->height : 0) -
+                          (node->left ? node->left->height : 0));
+}
+
+template <typename Key, typename C>
+void Set<Key, C>::HeightFix(Node* node) {
+  size_t height_left = (node->left ? node->left->height : 0);
+  size_t height_right = (node->right ? node->right->height : 0);
+  node->height = (height_left > height_right ? height_left : height_right) + 1;
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::Node* Set<Key, C>::Balance(Node* node) {
+  HeightFix(node);
+  if (BalanceFactor(node) == 2) {
+    if (BalanceFactor(node->right) < 0) {
+      node->right = RightRotation(node->right);
+    }
+    return LeftRotation(node);
+  }
+  if (BalanceFactor(node) == -2) {
+    if (BalanceFactor(node->left) > 0) {
+      node->left = LeftRotation(node->left);
+    }
+    return RightRotation(node);
+  }
+  return node;
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::Node* Set<Key, C>::LeftRotation(Node* node) {
+  Node* temp = node->right;
+  node->right = temp->left;
+  temp->left = node;
+  HeightFix(node);
+  HeightFix(temp);
+  return temp;
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::Node* Set<Key, C>::RightRotation(Node* node) {
+  Node* temp = node->left;
+  node->left = temp->right;
+  temp->right = node;
+  HeightFix(node);
+  HeightFix(temp);
+  return temp;
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::Node* Set<Key, C>::InsertRecursive(Node* root, const Key& val) {
+  if (root == nullptr) {
+    increase = true;
+    return new Node(val);
+  }
+  if (Compare(val, root->val)) {
+    root->left = InsertRecursive(root->left, val);
+  } else if (root->val == val){
+    increase = false;
+    return Balance(root);
+  } else {
+    root->right = InsertRecursive(root->right, val);
+  }
+  return Balance(root);
+}
+
+template <typename Key, typename C>
+void Set<Key, C>::Insert(const Key& val) {
+  root_ = InsertRecursive(root_, val);
+  if (increase) {
+    ++size;
+  }
+}
+
+template <typename Key, typename C>
+Set<Key, C>::~Set<Key, C>() {
+  ClearRecursive(root_);
 }
 
 template <typename Key, typename C>
@@ -170,102 +206,94 @@ template <typename Key, typename C>
 void Set<Key, C>::Clear() {
   ClearRecursive(root_);
   root_ = nullptr;
+  size = 0;
 }
 
 template <typename Key, typename C>
-Set<Key, C>::~Set() {
-  ClearRecursive(root_);
+typename Set<Key, C>::Node* Set<Key, C>::FindMin(Node* root) {
+  return root->left ? FindMin(root->left) : root;
 }
 
 template <typename Key, typename C>
-bool Set<Key, C>::Compare(const Key& elem1, const Key& elem2,
-                          const C& comp) const {
-  return comp(elem1, elem2);
-}
-
-template <typename Key, typename C>
-typename Set<Key, C>::Node* Set<Key, C>::Merge(Node* root1, Node* root2) {
-  if (root1 == nullptr || root2 == nullptr) {
-    return root1 ? root1 : root2;
+typename Set<Key, C>::Node* Set<Key, C>::RemoveMin(Node* root) {
+  if (root->left == nullptr) {
+    return root->right;
   }
-  if (root1->priority > root2->priority) {
-    root1->right = Merge(root1->right, root2);
-    UpdateAmount(root1);
-    return root1;
-  }
-  root2->left = Merge(root1, root2->left);
-  UpdateAmount(root2);
-  return root2;
+  root->left = RemoveMin(root->left);
+  return Balance(root);
 }
 
 template <typename Key, typename C>
-void Set<Key, C>::Split(Node* root, const Key& elem, Node*& left,
-                        Node*& right) {
+typename Set<Key, C>::Node* Set<Key, C>::EraseRecursive(Node* root, const Key& elem) {
   if (root == nullptr) {
-    left = right = nullptr;
-  } else if (Compare(root->val, elem)) {
-    Split(root->right, elem, root->right, right);
-    left = root;
+    decrease = false;
+    return nullptr;
+  }
+  if (elem < root->val) {
+    root->left = EraseRecursive(root->left, elem);
+  } else if (elem > root->val) {
+    root->right = EraseRecursive(root->right, elem);
   } else {
-    Split(root->left, elem, left, root->left);
-    right = root;
+    decrease = true;
+    Node* left = root->left;
+    Node* right = root->right;
+    delete root;
+    if (right == nullptr) {
+      return left;
+    }
+    Node* min_node = FindMin(right);
+    min_node->right = RemoveMin(right);
+    min_node->left = left;
+    return Balance(min_node);
   }
-  UpdateAmount(left);
-  UpdateAmount(right);
-}
-
-template <typename Key, typename C>
-void Set<Key, C>::Insert(const Key& elem) {
-  if (FindRecursive(root_, elem)) {
-    return;
-  }
-  Node* new_node = new Node(elem);
-  Node* temp1 = nullptr;
-  Node* temp2 = nullptr;
-  Split(root_, elem, temp1, temp2);
-  root_ = Merge(temp1, new_node);
-  root_ = Merge(root_, temp2);
-}
-
-template <typename Key, typename C>
-bool Set<Key, C>::Empty() const {
-  return GetAmount(root_) == 0;
-}
-
-template <typename Key, typename C>
-bool Set<Key, C>::FindRecursive(Node* root, const Key& elem) const {
-  if (root == nullptr || root->val == elem) {
-    return root ? root->val == elem : false;
-  }
-  if (root->val > elem) {
-    return FindRecursive(root->left, elem);
-  }
-  return FindRecursive(root->right, elem);
-}
-
-template <typename Key, typename C>
-bool Set<Key, C>::Find(const Key& elem) const {
-  return FindRecursive(root_, elem);
-}
-
-template <typename Key, typename C>
-void Set<Key, C>::EraseRecursive(Node*& root, const Key& elem) {
-  if (root == nullptr) {
-    return;
-  }
-  if (elem == root->val) {
-    Node* deleted_node = root;
-    root = Merge(root->left, root->right);
-    delete deleted_node;
-  } else if (elem < root->val) {
-    EraseRecursive(root->left, elem);
-  } else {
-    EraseRecursive(root->right, elem);
-  }
+  return Balance(root);
 }
 
 template <typename Key, typename C>
 void Set<Key, C>::Erase(const Key& elem) {
-  EraseRecursive(root_, elem);
-  UpdateAmount(root_);
+  root_ = EraseRecursive(root_, elem);
+  if (decrease) {
+    --size;
+  }
+}
+
+template <typename Key, typename C>
+bool Set<Key, C>::FindElem(Node* node, const Key& val) {
+  if (node == nullptr) {
+    return false;
+  }
+  if (node->val == val) {
+    return true;
+  }
+  if (node->val > val) {
+    bool res1 = FindElem(node->left, val);
+    if (res1) {
+      return true;
+    }
+  }
+  bool res2 = FindElem(node->right, val);
+  return res2;
+}
+
+template <typename Key, typename C>
+bool Set<Key, C>::IsFind(const Key& val) {
+  return FindElem(root_, val);
+}
+
+template <typename Key, typename C>
+size_t Set<Key, C>::Size() {
+  return size;
+}
+
+template <typename Key, typename C>
+void Set<Key, C>::InorderRecursive(Node* root) {
+  if (root) {
+    InorderRecursive(root->left);
+    std::cout << root->val << " ";
+    InorderRecursive(root->right);
+  }
+}
+template <typename Key, typename C>
+void Set<Key, C>::Inorder() {
+  InorderRecursive(root_);
 }
