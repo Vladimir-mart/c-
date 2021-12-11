@@ -54,7 +54,7 @@ class Set {
 
 template <typename Key, typename C>
 Set<Key, C>::Node::Node(const Key& elem)
-: left(nullptr), right(nullptr), val(elem), height(1) {}
+    : left(nullptr), right(nullptr), val(elem), height(1) {}
 
 template <typename Key, typename C>
 bool Set<Key, C>::Compare(const Key& elem1, const Key& elem2,
