@@ -7,7 +7,7 @@
 
 template <typename Key, typename C = std::less<Key>>
 class Set {
-public:
+ public:
   typedef size_t size_type;           // NOLINT
   typedef Key key_type;               // NOLINT
   typedef key_type value_type;        // NOLINT
@@ -23,8 +23,8 @@ public:
   bool IsFind(const Key& val);
   size_t Size();
   void Inorder();
-  
-private:
+
+ private:
   struct Node {
     Node(const Key& elem);
     Node* left = nullptr;
@@ -54,7 +54,7 @@ private:
 
 template <typename Key, typename C>
 Set<Key, C>::Node::Node(const Key& elem)
-    : left(nullptr), right(nullptr), val(elem), height(1) {}
+: left(nullptr), right(nullptr), val(elem), height(1) {}
 
 template <typename Key, typename C>
 bool Set<Key, C>::Compare(const Key& elem1, const Key& elem2,
@@ -164,14 +164,15 @@ typename Set<Key, C>::Node* Set<Key, C>::RightRotation(Node* node) {
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::Node* Set<Key, C>::InsertRecursive(Node* root, const Key& val) {
+typename Set<Key, C>::Node* Set<Key, C>::InsertRecursive(Node* root,
+                                                         const Key& val) {
   if (root == nullptr) {
     increase_ = true;
     return new Node(val);
   }
   if (Compare(val, root->val)) {
     root->left = InsertRecursive(root->left, val);
-  } else if (root->val == val){
+  } else if (root->val == val) {
     increase_ = false;
     return Balance(root);
   } else {
@@ -224,9 +225,10 @@ typename Set<Key, C>::Node* Set<Key, C>::RemoveMin(Node* root) {
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::Node* Set<Key, C>::EraseRecursive(Node* root, const Key& elem) {
+typename Set<Key, C>::Node* Set<Key, C>::EraseRecursive(Node* root,
+                                                        const Key& elem) {
   if (root == nullptr) {
-    decrease_= false;
+    decrease_ = false;
     return nullptr;
   }
   if (elem < root->val) {
@@ -234,7 +236,7 @@ typename Set<Key, C>::Node* Set<Key, C>::EraseRecursive(Node* root, const Key& e
   } else if (elem > root->val) {
     root->right = EraseRecursive(root->right, elem);
   } else {
-    decrease_= true;
+    decrease_ = true;
     Node* left = root->left;
     Node* right = root->right;
     delete root;
