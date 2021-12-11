@@ -17,6 +17,7 @@ class Set {
   Set(const Set& st);
   Set& operator=(const Set& st);
   ~Set();
+  bool Empty() const;
   void Insert(const Key& elem);
   void Clear();
   void Erase(const Key& elem);
@@ -298,4 +299,9 @@ void Set<Key, C>::InorderRecursive(Node* root) {
 template <typename Key, typename C>
 void Set<Key, C>::Inorder() {
   InorderRecursive(root_);
+}
+
+template <typename Key, typename C>
+bool Set<Key, C>::Empty() const {
+  return size_ == 0;
 }
