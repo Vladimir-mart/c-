@@ -447,9 +447,9 @@ typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator++(
   return copy;
 }
 
-// NOLINT
+
 template <typename Key, typename C>
-typename Set<Key, C>::iterator Set<Key, C>::begin() {
+typename Set<Key, C>::iterator Set<Key, C>::begin() { // NOLINT
   Node* curr = root_;
   std::stack<Node*> s;
   while (curr) {
@@ -459,9 +459,9 @@ typename Set<Key, C>::iterator Set<Key, C>::begin() {
   return iterator(s, true);
 }
 
-// NOLINT
+
 template <typename Key, typename C>
-typename Set<Key, C>::const_iterator Set<Key, C>::cbegin() {
+typename Set<Key, C>::const_iterator Set<Key, C>::cbegin() { // NOLINT
   Node* curr = root_;
   std::stack<Node*> s;
   while (curr) {
@@ -473,7 +473,7 @@ typename Set<Key, C>::const_iterator Set<Key, C>::cbegin() {
 
 // NOLINT
 template <typename Key, typename C>
-typename Set<Key, C>::iterator Set<Key, C>::end() {
+typename Set<Key, C>::iterator Set<Key, C>::end() { // NOLINT
   Node* curr = root_;
   std::stack<Node*> s;
   while (curr) {
@@ -484,9 +484,9 @@ typename Set<Key, C>::iterator Set<Key, C>::end() {
   return iterator(s, false);
 }
 
-// NOLINT
+
 template <typename Key, typename C>
-typename Set<Key, C>::const_iterator Set<Key, C>::cend() {
+typename Set<Key, C>::const_iterator Set<Key, C>::cend() { // NOLINT
   Node* curr = root_;
   std::stack<Node*> s;
   while (curr) {
