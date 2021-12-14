@@ -512,14 +512,14 @@ typename Set<Key, C>::reverse_iterator Set<Key, C>::rend() const {  // NOLINT
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crbegin()
-    const {  // NOLINT
+typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crbegin()  // NOLINT
+    const {
   return const_reverse_iterator(cend());
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crend()
-    const {  // NOLINT
+typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crend()  // NOLINT
+    const {
   return const_reverse_iterator(cbegin());
 }
 
