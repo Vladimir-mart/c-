@@ -1,3 +1,4 @@
+#define PARTTWO
 #pragma once
 
 #include <functional>
@@ -10,8 +11,7 @@ template <typename Key, typename C = std::less<Key>>
 class Set {
  public:
   typedef size_t size_type;           // NOLINT
-  typedef Key key_type;               // NOLINT
-  typedef key_type value_type;        // NOLINT
+  typedef Key value_type;             // NOLINT
   typedef C key_compare;              // NOLINT
   typedef key_compare value_compare;  // NOLINT
   Set() = default;
@@ -56,7 +56,7 @@ class Set {
  public:
   class ConstIterator {
    public:
-    typedef value_type value_type;                              // NOLINT
+    typedef Key value_type;                                     // NOLINT
     typedef const Key& reference;                               // NOLINT
     typedef std::bidirectional_iterator_tag iterator_category;  // NOLINT
     typedef std::ptrdiff_t difference_type;                     // NOLINT
