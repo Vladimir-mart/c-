@@ -88,7 +88,7 @@ public:
     bool operator==(const CommonReverseIterator<Iterator>& iter_) const;
     bool operator!=(const CommonReverseIterator<Iterator>& iter_) const;
     const Key& operator*();
-    Iterator base() const;
+    Iterator Base() const;
     
   private:
     Iterator iter_;
@@ -447,6 +447,7 @@ typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator++(
   return copy;
 }
 
+// NOLINT
 template <typename Key, typename C>
 typename Set<Key, C>::iterator Set<Key, C>::begin() {
   Node* curr = root_;
@@ -458,6 +459,7 @@ typename Set<Key, C>::iterator Set<Key, C>::begin() {
   return iterator(s, true);
 }
 
+// NOLINT
 template <typename Key, typename C>
 typename Set<Key, C>::const_iterator Set<Key, C>::cbegin() {
   Node* curr = root_;
@@ -469,6 +471,7 @@ typename Set<Key, C>::const_iterator Set<Key, C>::cbegin() {
   return const_iterator(s, true);
 }
 
+// NOLINT
 template <typename Key, typename C>
 typename Set<Key, C>::iterator Set<Key, C>::end() {
   Node* curr = root_;
@@ -481,6 +484,7 @@ typename Set<Key, C>::iterator Set<Key, C>::end() {
   return iterator(s, false);
 }
 
+// NOLINT
 template <typename Key, typename C>
 typename Set<Key, C>::const_iterator Set<Key, C>::cend() {
   Node* curr = root_;
@@ -503,21 +507,25 @@ bool Set<Key, C>::const_iterator::operator!=(const const_iterator& iter_) const 
   return !(*this == iter_);
 }
 
+// NOLINT
 template <typename Key, typename C>
 typename Set<Key, C>::reverse_iterator Set<Key, C>::rbegin() {
   return reverse_iterator(end());
 }
 
+// NOLINT
 template <typename Key, typename C>
 typename Set<Key, C>::reverse_iterator Set<Key, C>::rend() {
   return reverse_iterator(begin());
 }
 
+// NOLINT
 template <typename Key, typename C>
 typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crbegin() {
   return const_reverse_iterator(cend());
 }
 
+// NOLINT
 template <typename Key, typename C>
 typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crend() {
   return const_reverse_iterator(cbegin());
