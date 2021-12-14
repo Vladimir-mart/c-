@@ -1,13 +1,15 @@
+#define PARTTWO
 #pragma once
 
 #include <functional>
 #include <iostream>
+#include <iterator>
 #include <random>
 #include <stack>
 
 template <typename Key, typename C = std::less<Key>>
 class Set {
- public:
+public:
   typedef size_t size_type;           // NOLINT
   typedef Key key_type;               // NOLINT
   typedef key_type value_type;        // NOLINT
@@ -24,8 +26,8 @@ class Set {
   bool IsFind(const Key& val);
   size_t Size();
   void Inorder();
-
- private:
+  
+private:
   struct Node {
     Node(const Key& elem);
     Node* left = nullptr;
@@ -51,11 +53,65 @@ class Set {
   Node* LeftRotation(Node* node);
   Node* RightRotation(Node* node);
   bool FindElem(Node* node, const Key& val);
+  
+public:
+  class const_iterator {
+  public:
+    typedef value_type value_type;                              // NOLINT
+    typedef const Key& reference;                               // NOLINT
+    typedef std::bidirectional_iterator_tag iterator_category;  // NOLINT
+    typedef std::ptrdiff_t difference_type;                     // NOLINT
+    typedef Key* pointer;                                       // NOLINT
+    const_iterator() = default;
+    const_iterator(const std::stack<Node*>& s, bool check);
+    const_iterator& operator++();
+    const_iterator& operator++(int);
+    const_iterator& operator--();
+    const_iterator& operator--(int);
+    bool operator==(const const_iterator& iter) const;
+    bool operator!=(const const_iterator& iter) const;
+    const Key& operator*();
+    
+  private:
+    std::stack<struct Node*> st;
+    struct Node* current = nullptr;
+    struct Node* next = nullptr;
+    struct Node* intermediate = nullptr;
+  };
+  
+  template <typename Iterator>
+  class common_reverse_iterator {
+  public:
+    common_reverse_iterator<Iterator>& operator++();
+    common_reverse_iterator<Iterator>& operator++(int);
+    common_reverse_iterator<Iterator>& operator--();
+    common_reverse_iterator<Iterator>& operator--(int);
+    bool operator==(const common_reverse_iterator<Iterator>& iter) const;
+    bool operator!=(const common_reverse_iterator<Iterator>& iter) const;
+    const Key& operator*();
+    Iterator base() const;
+    
+  private:
+    Iterator iter;
+  };
+  typedef const_iterator iterator;                           // NOLINT
+  typedef std::reverse_iterator<iterator> reverse_iterator;  // NOLINT
+  typedef std::reverse_iterator<const_iterator>
+  const_reverse_iterator;  // NOLINT
+  iterator begin();
+  const_iterator cbegin();
+  iterator end();
+  const_iterator cend();
+  reverse_iterator rbegin();
+  reverse_iterator rend();
+  const_reverse_iterator crbegin();
+  const_reverse_iterator crend();
+  bool operator<(Set& st);
 };
 
 template <typename Key, typename C>
 Set<Key, C>::Node::Node(const Key& elem)
-    : left(nullptr), right(nullptr), val(elem), height(1) {}
+: left(nullptr), right(nullptr), val(elem), height(1) {}
 
 template <typename Key, typename C>
 bool Set<Key, C>::Compare(const Key& elem1, const Key& elem2,
@@ -304,4 +360,179 @@ void Set<Key, C>::Inorder() {
 template <typename Key, typename C>
 bool Set<Key, C>::Empty() const {
   return size_ == 0;
+}
+
+template <typename Key, typename C>
+Set<Key, C>::const_iterator::const_iterator(const std::stack<Node*>& s,
+                                            bool check)
+: st(s) {
+  if (!st.empty()) {
+    if (check) {
+      next = st.top();
+      st.pop();
+      current = next;
+      next = next->right;
+    } else {
+      current = st.top();
+      st.pop();
+      if (!st.empty()) {
+        next = st.top();
+        st.pop();
+        intermediate = next;
+        next = next->left;
+      }
+    }
+  }
+}
+
+template <typename Key, typename C>
+const Key& Set<Key, C>::const_iterator::operator*() {
+  return current->val;
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_iterator& Set<Key, C>::const_iterator::
+operator++() {
+  while (next) {
+    st.push(next);
+    next = next->left;
+  }
+  if (!st.empty()) {
+    next = st.top();
+    st.pop();
+    current = next;
+    next = next->right;
+  } else {
+    current = next = nullptr;
+  }
+  return *this;
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_iterator& Set<Key, C>::const_iterator::
+operator--() {
+  if (intermediate && intermediate->right == nullptr) {
+    current = intermediate;
+    intermediate = nullptr;
+    return *this;
+  }
+  while (next) {
+    st.push(next);
+    next = next->right;
+  }
+  if (!st.empty()) {
+    next = st.top();
+    st.pop();
+    current = next;
+    next = next->left;
+  } else {
+    current = next = nullptr;
+  }
+  return *this;
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_iterator& Set<Key, C>::const_iterator::operator--(
+                                                                              int) {
+  auto copy = *this;
+  --(*this);
+  return copy;
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_iterator& Set<Key, C>::const_iterator::operator++(
+                                                                              int) {
+  auto copy = *this;
+  ++(*this);
+  return copy;
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::iterator Set<Key, C>::begin() {
+  Node* curr = root_;
+  std::stack<Node*> s;
+  while (curr) {
+    s.push(curr);
+    curr = curr->left;
+  }
+  return iterator(s, true);
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_iterator Set<Key, C>::cbegin() {
+  Node* curr = root_;
+  std::stack<Node*> s;
+  while (curr) {
+    s.push(curr);
+    curr = curr->left;
+  }
+  return const_iterator(s, true);
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::iterator Set<Key, C>::end() {
+  Node* curr = root_;
+  std::stack<Node*> s;
+  while (curr) {
+    s.push(curr);
+    curr = curr->right;
+  }
+  s.push(curr);
+  return iterator(s, false);
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_iterator Set<Key, C>::cend() {
+  Node* curr = root_;
+  std::stack<Node*> s;
+  while (curr) {
+    s.push(curr);
+    curr = curr->right;
+  }
+  s.push(curr);
+  return const_iterator(s, false);
+}
+
+template <typename Key, typename C>
+bool Set<Key, C>::const_iterator::operator==(const const_iterator& iter) const {
+  return this->current == iter.current;
+}
+
+template <typename Key, typename C>
+bool Set<Key, C>::const_iterator::operator!=(const const_iterator& iter) const {
+  return !(*this == iter);
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::reverse_iterator Set<Key, C>::rbegin() {
+  return reverse_iterator(end());
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::reverse_iterator Set<Key, C>::rend() {
+  return reverse_iterator(begin());
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crbegin() {
+  return const_reverse_iterator(cend());
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crend() {
+  return const_reverse_iterator(cbegin());
+}
+
+template <typename Key, typename C>
+bool Set<Key, C>::operator<(Set<Key, C>& st) {
+  auto iter1 = begin();
+  auto iter2 = st.begin();
+  while (iter1 != end() && iter2 != st.end()) {
+    if (*iter1 < *iter2) {
+      return *iter1 < *iter2;
+    }
+    ++iter1;
+    ++iter2;
+  }
+  return size_ < st.size_;
 }
