@@ -97,7 +97,7 @@ class Set {
   typedef const_iterator iterator;                           // NOLINT
   typedef std::reverse_iterator<iterator> reverse_iterator;  // NOLINT
   typedef std::reverse_iterator<const_iterator>
-            const_reverse_iterator;  // NOLINT
+      const_reverse_iterator;        // NOLINT
   iterator begin();                  // NOLINT
   const_iterator cbegin();           // NOLINT
   iterator end();                    // NOLINT
@@ -365,7 +365,7 @@ bool Set<Key, C>::Empty() const {
 template <typename Key, typename C>
 Set<Key, C>::ConstIterator::ConstIterator(const std::stack<Node*>& s,
                                           bool check)
-   : st_(s) {
+    : st_(s) {
   if (!st_.empty()) {
     if (check) {
       next_ = st_.top();
