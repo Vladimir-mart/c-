@@ -1,4 +1,3 @@
-#define PARTTWO
 #pragma once
 
 #include <functional>
@@ -55,57 +54,58 @@ private:
   bool FindElem(Node* node, const Key& val);
   
 public:
-  class const_iterator {
+  class ConstIterator {
   public:
     typedef value_type value_type;                              // NOLINT
     typedef const Key& reference;                               // NOLINT
     typedef std::bidirectional_iterator_tag iterator_category;  // NOLINT
     typedef std::ptrdiff_t difference_type;                     // NOLINT
     typedef Key* pointer;                                       // NOLINT
-    const_iterator() = default;
-    const_iterator(const std::stack<Node*>& s, bool check);
-    const_iterator& operator++();
-    const_iterator& operator++(int);
-    const_iterator& operator--();
-    const_iterator& operator--(int);
-    bool operator==(const const_iterator& iter) const;
-    bool operator!=(const const_iterator& iter) const;
+    ConstIterator() = default;
+    ConstIterator(const std::stack<Node*>& s, bool check);
+    ConstIterator& operator++();
+    ConstIterator& operator++(int);
+    ConstIterator& operator--();
+    ConstIterator& operator--(int);
+    bool operator==(const ConstIterator& iter) const;
+    bool operator!=(const ConstIterator& iter) const;
     const Key& operator*();
     
   private:
-    std::stack<struct Node*> st;
-    struct Node* current = nullptr;
-    struct Node* next = nullptr;
-    struct Node* intermediate = nullptr;
+    std::stack<struct Node*> st_;
+    struct Node* current_ = nullptr;
+    struct Node* next_ = nullptr;
+    struct Node* intermediate_ = nullptr;
   };
   
   template <typename Iterator>
-  class common_reverse_iterator {
+  class CommonReverseIterator {
   public:
-    common_reverse_iterator<Iterator>& operator++();
-    common_reverse_iterator<Iterator>& operator++(int);
-    common_reverse_iterator<Iterator>& operator--();
-    common_reverse_iterator<Iterator>& operator--(int);
-    bool operator==(const common_reverse_iterator<Iterator>& iter) const;
-    bool operator!=(const common_reverse_iterator<Iterator>& iter) const;
+    CommonReverseIterator<Iterator>& operator++();
+    CommonReverseIterator<Iterator>& operator++(int);
+    CommonReverseIterator<Iterator>& operator--();
+    CommonReverseIterator<Iterator>& operator--(int);
+    bool operator==(const CommonReverseIterator<Iterator>& iter_) const;
+    bool operator!=(const CommonReverseIterator<Iterator>& iter_) const;
     const Key& operator*();
     Iterator base() const;
     
   private:
-    Iterator iter;
+    Iterator iter_;
   };
+  typedef ConstIterator const_iterator;                      // NOLINT
   typedef const_iterator iterator;                           // NOLINT
   typedef std::reverse_iterator<iterator> reverse_iterator;  // NOLINT
   typedef std::reverse_iterator<const_iterator>
   const_reverse_iterator;  // NOLINT
-  iterator begin();
-  const_iterator cbegin();
-  iterator end();
-  const_iterator cend();
-  reverse_iterator rbegin();
-  reverse_iterator rend();
-  const_reverse_iterator crbegin();
-  const_reverse_iterator crend();
+  iterator begin();                   // NOLINT
+  const_iterator cbegin();            // NOLINT
+  iterator end();                     // NOLINT
+  const_iterator cend();              // NOLINT
+  reverse_iterator rbegin();          // NOLINT
+  reverse_iterator rend();            // NOLINT
+  const_reverse_iterator crbegin();   // NOLINT
+  const_reverse_iterator crend();     // NOLINT
   bool operator<(Set& st);
 };
 
@@ -363,76 +363,76 @@ bool Set<Key, C>::Empty() const {
 }
 
 template <typename Key, typename C>
-Set<Key, C>::const_iterator::const_iterator(const std::stack<Node*>& s,
+Set<Key, C>::ConstIterator::ConstIterator(const std::stack<Node*>& s,
                                             bool check)
-: st(s) {
-  if (!st.empty()) {
+: st_(s) {
+  if (!st_.empty()) {
     if (check) {
-      next = st.top();
-      st.pop();
-      current = next;
-      next = next->right;
+      next_ = st_.top();
+      st_.pop();
+      current_ = next_;
+      next_ = next_->right;
     } else {
-      current = st.top();
-      st.pop();
-      if (!st.empty()) {
-        next = st.top();
-        st.pop();
-        intermediate = next;
-        next = next->left;
+      current_ = st_.top();
+      st_.pop();
+      if (!st_.empty()) {
+        next_ = st_.top();
+        st_.pop();
+        intermediate_ = next_;
+        next_ = next_->left;
       }
     }
   }
 }
 
 template <typename Key, typename C>
-const Key& Set<Key, C>::const_iterator::operator*() {
-  return current->val;
+const Key& Set<Key, C>::ConstIterator::operator*() {
+  return current_->val;
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::const_iterator& Set<Key, C>::const_iterator::
+typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::
 operator++() {
-  while (next) {
-    st.push(next);
-    next = next->left;
+  while (next_) {
+    st_.push(next_);
+    next_ = next_->left;
   }
-  if (!st.empty()) {
-    next = st.top();
-    st.pop();
-    current = next;
-    next = next->right;
+  if (!st_.empty()) {
+    next_ = st_.top();
+    st_.pop();
+    current_ = next_;
+    next_ = next_->right;
   } else {
-    current = next = nullptr;
+    current_ = next_ = nullptr;
   }
   return *this;
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::const_iterator& Set<Key, C>::const_iterator::
+typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::
 operator--() {
-  if (intermediate && intermediate->right == nullptr) {
-    current = intermediate;
-    intermediate = nullptr;
+  if (intermediate_ && intermediate_->right == nullptr) {
+    current_ = intermediate_;
+    intermediate_ = nullptr;
     return *this;
   }
-  while (next) {
-    st.push(next);
-    next = next->right;
+  while (next_) {
+    st_.push(next_);
+    next_ = next_->right;
   }
-  if (!st.empty()) {
-    next = st.top();
-    st.pop();
-    current = next;
-    next = next->left;
+  if (!st_.empty()) {
+    next_ = st_.top();
+    st_.pop();
+    current_ = next_;
+    next_ = next_->left;
   } else {
-    current = next = nullptr;
+    current_ = next_ = nullptr;
   }
   return *this;
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::const_iterator& Set<Key, C>::const_iterator::operator--(
+typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator--(
                                                                               int) {
   auto copy = *this;
   --(*this);
@@ -440,7 +440,7 @@ typename Set<Key, C>::const_iterator& Set<Key, C>::const_iterator::operator--(
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::const_iterator& Set<Key, C>::const_iterator::operator++(
+typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator++(
                                                                               int) {
   auto copy = *this;
   ++(*this);
@@ -494,13 +494,13 @@ typename Set<Key, C>::const_iterator Set<Key, C>::cend() {
 }
 
 template <typename Key, typename C>
-bool Set<Key, C>::const_iterator::operator==(const const_iterator& iter) const {
-  return this->current == iter.current;
+bool Set<Key, C>::const_iterator::operator==(const const_iterator& iter_) const {
+  return this->current_ == iter_.current_;
 }
 
 template <typename Key, typename C>
-bool Set<Key, C>::const_iterator::operator!=(const const_iterator& iter) const {
-  return !(*this == iter);
+bool Set<Key, C>::const_iterator::operator!=(const const_iterator& iter_) const {
+  return !(*this == iter_);
 }
 
 template <typename Key, typename C>
