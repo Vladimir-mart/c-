@@ -85,8 +85,8 @@ public:
     CommonReverseIterator<Iterator>& operator++(int);
     CommonReverseIterator<Iterator>& operator--();
     CommonReverseIterator<Iterator>& operator--(int);
-    bool operator==(const CommonReverseIterator<Iterator>& iter_) const;
-    bool operator!=(const CommonReverseIterator<Iterator>& iter_) const;
+    bool operator==(const CommonReverseIterator<Iterator>& iter) const;
+    bool operator!=(const CommonReverseIterator<Iterator>& iter) const;
     const Key& operator*();
     Iterator Base() const;
     
@@ -498,13 +498,13 @@ typename Set<Key, C>::const_iterator Set<Key, C>::cend() { // NOLINT
 }
 
 template <typename Key, typename C>
-bool Set<Key, C>::const_iterator::operator==(const const_iterator& iter_) const {
-  return this->current_ == iter_.current_;
+bool Set<Key, C>::const_iterator::operator==(const const_iterator& iter) const {
+  return this->current_ == iter.current_;
 }
 
 template <typename Key, typename C>
-bool Set<Key, C>::const_iterator::operator!=(const const_iterator& iter_) const {
-  return !(*this == iter_);
+bool Set<Key, C>::const_iterator::operator!=(const const_iterator& iter) const {
+  return !(*this == iter);
 }
 
 template <typename Key, typename C>
