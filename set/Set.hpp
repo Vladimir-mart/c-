@@ -64,9 +64,9 @@ class Set {
     ConstIterator() = default;
     ConstIterator(const std::stack<Node*>& s, bool check);
     ConstIterator& operator++();
-    ConstIterator& operator++(int);
+    ConstIterator operator++(int);
     ConstIterator& operator--();
-    ConstIterator& operator--(int);
+    ConstIterator operator--(int);
     bool operator==(const ConstIterator& iter) const;
     bool operator!=(const ConstIterator& iter) const;
     const Key& operator*();
@@ -82,9 +82,9 @@ class Set {
   class CommonReverseIterator {
    public:
     CommonReverseIterator<Iterator>& operator++();
-    CommonReverseIterator<Iterator>& operator++(int);
+    CommonReverseIterator<Iterator> operator++(int);
     CommonReverseIterator<Iterator>& operator--();
-    CommonReverseIterator<Iterator>& operator--(int);
+    CommonReverseIterator<Iterator> operator--(int);
     bool operator==(const CommonReverseIterator<Iterator>& iter) const;
     bool operator!=(const CommonReverseIterator<Iterator>& iter) const;
     const Key& operator*();
@@ -430,7 +430,7 @@ typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator--() {
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator--(
+typename Set<Key, C>::ConstIterator Set<Key, C>::ConstIterator::operator--(
     int) {
   auto copy = *this;
   --(*this);
@@ -438,7 +438,7 @@ typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator--(
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator++(
+typename Set<Key, C>::ConstIterator Set<Key, C>::ConstIterator::operator++(
     int) {
   auto copy = *this;
   ++(*this);
