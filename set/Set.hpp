@@ -507,27 +507,23 @@ bool Set<Key, C>::const_iterator::operator!=(const const_iterator& iter_) const 
   return !(*this == iter_);
 }
 
-// NOLINT
 template <typename Key, typename C>
-typename Set<Key, C>::reverse_iterator Set<Key, C>::rbegin() {
+typename Set<Key, C>::reverse_iterator Set<Key, C>::rbegin() { // NOLINT
   return reverse_iterator(end());
 }
 
-// NOLINT
 template <typename Key, typename C>
-typename Set<Key, C>::reverse_iterator Set<Key, C>::rend() {
+typename Set<Key, C>::reverse_iterator Set<Key, C>::rend() { // NOLINT
   return reverse_iterator(begin());
 }
 
-// NOLINT
 template <typename Key, typename C>
-typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crbegin() {
+typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crbegin() { // NOLINT
   return const_reverse_iterator(cend());
 }
 
-// NOLINT
 template <typename Key, typename C>
-typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crend() {
+typename Set<Key, C>::const_reverse_iterator Set<Key, C>::crend() { // NOLINT
   return const_reverse_iterator(cbegin());
 }
 
