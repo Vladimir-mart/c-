@@ -1,4 +1,5 @@
 #define PARTTWO
+#define PARTTHREE
 #pragma once
 
 #include <functional>
@@ -62,6 +63,7 @@ class Set {
     typedef std::ptrdiff_t difference_type;                     // NOLINT
     typedef Key* pointer;                                       // NOLINT
     ConstIterator() = default;
+    ConstIterator(Node* root);
     ConstIterator(const std::stack<Node*>& s, bool check);
     ConstIterator& operator++();
     ConstIterator operator++(int);
@@ -97,15 +99,21 @@ class Set {
   typedef const_iterator iterator;                           // NOLINT
   typedef std::reverse_iterator<iterator> reverse_iterator;  // NOLINT
   typedef std::reverse_iterator<const_iterator>
-      const_reverse_iterator;              // NOLINT
-  iterator begin() const;                  // NOLINT
-  const_iterator cbegin() const;           // NOLINT
-  iterator end() const;                    // NOLINT
-  const_iterator cend() const;             // NOLINT
-  reverse_iterator rbegin() const;         // NOLINT
-  reverse_iterator rend() const;           // NOLINT
-  const_reverse_iterator crbegin() const;  // NOLINT
-  const_reverse_iterator crend() const;    // NOLINT
+      const_reverse_iterator;                        // NOLINT
+  iterator begin() const;                            // NOLINT
+  const_iterator cbegin() const;                     // NOLINT
+  iterator end() const;                              // NOLINT
+  const_iterator cend() const;                       // NOLINT
+  reverse_iterator rbegin() const;                   // NOLINT
+  reverse_iterator rend() const;                     // NOLINT
+  const_reverse_iterator crbegin() const;            // NOLINT
+  const_reverse_iterator crend() const;              // NOLINT
+  iterator Find(const Key& elem);
+  const_iterator Find(const Key& elem) const;
+  iterator LowerBound(const Key& elem);
+  const_iterator LowerBound(const Key& elem) const;
+  iterator UpperBound(const Key& elem);
+  const_iterator UpperBound(const Key& elem) const;
   bool operator<(const Set& st);
 };
 
@@ -363,6 +371,9 @@ bool Set<Key, C>::Empty() const {
 }
 
 template <typename Key, typename C>
+Set<Key, C>::ConstIterator::ConstIterator(Node* root): current_(root), next_(nullptr), intermediate_(nullptr) {}
+
+template <typename Key, typename C>
 Set<Key, C>::ConstIterator::ConstIterator(const std::stack<Node*>& s,
                                           bool check)
     : st_(s) {
@@ -372,6 +383,7 @@ Set<Key, C>::ConstIterator::ConstIterator(const std::stack<Node*>& s,
       st_.pop();
       current_ = next_;
       next_ = next_->right;
+      intermediate_ = nullptr;
     } else {
       current_ = st_.top();
       st_.pop();
@@ -535,4 +547,94 @@ bool Set<Key, C>::operator<(const Set<Key, C>& st) {
     ++iter2;
   }
   return size_ < st.size_;
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::iterator Set<Key, C>::LowerBound(const Key& elem) {
+  Node* result = nullptr;
+  Node* temp = root_;
+  while (temp) {
+    if (!Compare(temp->val, elem)) {
+      result = temp;
+      temp = temp->left;
+    } else {
+      temp = temp->right;
+    }
+  }
+  return iterator(result);
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_iterator Set<Key, C>::LowerBound(const Key& elem) const {
+  Node* result = nullptr;
+  Node* temp = root_;
+  while (temp) {
+    if (!Compare(temp->val, elem)) {
+      result = temp;
+      temp = temp->left;
+    } else {
+      temp = temp->right;
+    }
+  }
+  return const_iterator(result);
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::iterator Set<Key, C>::UpperBound(const Key& elem) {
+  Node* result = nullptr;
+  Node* temp = root_;
+  while (temp) {
+    if (Compare(elem, temp->val)) {
+      result = temp;
+      temp = temp->left;
+    } else {
+      temp = temp->right;
+    }
+  }
+  return iterator(result);
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_iterator Set<Key, C>::UpperBound(const Key& elem) const {
+  Node* result = nullptr;
+  Node* temp = root_;
+  while (temp) {
+    if (Compare(elem, temp->val)) {
+      result = temp;
+      temp = temp->left;
+    } else {
+      temp = temp->right;
+    }
+  }
+  return const_iterator(result);
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::iterator Set<Key, C>::Find(const Key& elem) {
+  Node* temp = root_;
+  while (temp) {
+    if (Compare(elem, temp->val)) {
+      temp = temp->left;
+    } else if (elem == temp->val) {
+      return iterator(temp);
+    } else {
+      temp = temp->right;
+    }
+  }
+  return end();
+}
+
+template <typename Key, typename C>
+typename Set<Key, C>::const_iterator Set<Key, C>::Find(const Key& elem) const {
+  Node* temp = root_;
+  while (temp) {
+    if (Compare(elem, temp->val)) {
+      temp = temp->left;
+    } else if (elem == temp->val) {
+      return const_iterator(temp);
+    } else {
+      temp = temp->right;
+    }
+  }
+  return end();
 }
