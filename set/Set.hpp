@@ -99,15 +99,15 @@ class Set {
   typedef const_iterator iterator;                           // NOLINT
   typedef std::reverse_iterator<iterator> reverse_iterator;  // NOLINT
   typedef std::reverse_iterator<const_iterator>
-      const_reverse_iterator;               // NOLINT
-  iterator begin() const;                   // NOLINT
-  const_iterator cbegin() const;            // NOLINT
-  iterator end() const;                     // NOLINT
-  const_iterator cend() const;              // NOLINT
-  reverse_iterator rbegin() const;          // NOLINT
-  reverse_iterator rend() const;            // NOLINT
-  const_reverse_iterator crbegin() const;   // NOLINT
-  const_reverse_iterator crend() const;     // NOLINT
+      const_reverse_iterator;              // NOLINT
+  iterator begin() const;                  // NOLINT
+  const_iterator cbegin() const;           // NOLINT
+  iterator end() const;                    // NOLINT
+  const_iterator cend() const;             // NOLINT
+  reverse_iterator rbegin() const;         // NOLINT
+  reverse_iterator rend() const;           // NOLINT
+  const_reverse_iterator crbegin() const;  // NOLINT
+  const_reverse_iterator crend() const;    // NOLINT
   iterator Find(const Key& elem);
   const_iterator Find(const Key& elem) const;
   iterator LowerBound(const Key& elem);
@@ -371,7 +371,8 @@ bool Set<Key, C>::Empty() const {
 }
 
 template <typename Key, typename C>
-Set<Key, C>::ConstIterator::ConstIterator(Node* root): current_(root), next_(nullptr), intermediate_(nullptr) {}
+Set<Key, C>::ConstIterator::ConstIterator(Node* root)
+    : current_(root), next_(nullptr), intermediate_(nullptr) {}
 
 template <typename Key, typename C>
 Set<Key, C>::ConstIterator::ConstIterator(const std::stack<Node*>& s,
@@ -565,7 +566,8 @@ typename Set<Key, C>::iterator Set<Key, C>::LowerBound(const Key& elem) {
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::const_iterator Set<Key, C>::LowerBound(const Key& elem) const {
+typename Set<Key, C>::const_iterator Set<Key, C>::LowerBound(
+    const Key& elem) const {
   Node* result = nullptr;
   Node* temp = root_;
   while (temp) {
@@ -595,7 +597,8 @@ typename Set<Key, C>::iterator Set<Key, C>::UpperBound(const Key& elem) {
 }
 
 template <typename Key, typename C>
-typename Set<Key, C>::const_iterator Set<Key, C>::UpperBound(const Key& elem) const {
+typename Set<Key, C>::const_iterator Set<Key, C>::UpperBound(
+    const Key& elem) const {
   Node* result = nullptr;
   Node* temp = root_;
   while (temp) {
