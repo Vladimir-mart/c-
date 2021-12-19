@@ -107,12 +107,12 @@ class Set {
   typedef const_iterator iterator;                           // NOLINT
   typedef std::reverse_iterator<iterator> reverse_iterator;  // NOLINT
   typedef std::reverse_iterator<const_iterator>
-      const_reverse_iterator;              // NOLINT
+      const_reverse_iterator;  // NOLINT
 
-  iterator begin() const;                  // NOLINT
-  const_iterator cbegin() const;           // NOLINT
-  iterator end() const;                    // NOLINT
-  const_iterator cend() const;             // NOLINT
+  iterator begin() const;         // NOLINT
+  const_iterator cbegin() const;  // NOLINT
+  iterator end() const;           // NOLINT
+  const_iterator cend() const;    // NOLINT
 
   reverse_iterator rbegin() const;         // NOLINT
   reverse_iterator rend() const;           // NOLINT
