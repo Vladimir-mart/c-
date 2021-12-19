@@ -81,7 +81,7 @@ class Set {
     const Key& operator*();
 
    private:
-    std::stack<struct Node*> prev_nodes;
+    std::stack<struct Node*> prev_nodes_;
     struct Node* current_ = nullptr;
     struct Node* next_ = nullptr;
     struct Node* intermediate_ = nullptr;
@@ -371,20 +371,20 @@ Set<Key, C>::ConstIterator::ConstIterator(Node* root)
 template <typename Key, typename C>
 Set<Key, C>::ConstIterator::ConstIterator(const std::stack<Node*>& s,
                                           bool check)
-    : prev_nodes(s) {
-  if (!prev_nodes.empty()) {
+    : prev_nodes_(s) {
+  if (!prev_nodes_.empty()) {
     if (check) {
-      next_ = prev_nodes.top();
-      prev_nodes.pop();
+      next_ = prev_nodes_.top();
+      prev_nodes_.pop();
       current_ = next_;
       next_ = next_->right;
       intermediate_ = nullptr;
     } else {
-      current_ = prev_nodes.top();
-      prev_nodes.pop();
-      if (!prev_nodes.empty()) {
-        next_ = prev_nodes.top();
-        prev_nodes.pop();
+      current_ = prev_nodes_.top();
+      prev_nodes_.pop();
+      if (!prev_nodes_.empty()) {
+        next_ = prev_nodes_.top();
+        prev_nodes_.pop();
         intermediate_ = next_;
         next_ = next_->left;
       }
@@ -400,12 +400,12 @@ const Key& Set<Key, C>::ConstIterator::operator*() {
 template <typename Key, typename C>
 typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator++() {
   while (next_) {
-    prev_nodes.push(next_);
+    prev_nodes_.push(next_);
     next_ = next_->left;
   }
-  if (!prev_nodes.empty()) {
-    next_ = prev_nodes.top();
-    prev_nodes.pop();
+  if (!prev_nodes_.empty()) {
+    next_ = prev_nodes_.top();
+    prev_nodes_.pop();
     current_ = next_;
     next_ = next_->right;
   } else {
@@ -422,12 +422,12 @@ typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator--() {
     return *this;
   }
   while (next_) {
-    prev_nodes.push(next_);
+    prev_nodes_.push(next_);
     next_ = next_->right;
   }
-  if (!prev_nodes.empty()) {
-    next_ = prev_nodes.top();
-    prev_nodes.pop();
+  if (!prev_nodes_.empty()) {
+    next_ = prev_nodes_.top();
+    prev_nodes_.pop();
     current_ = next_;
     next_ = next_->left;
   } else {
