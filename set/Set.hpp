@@ -15,17 +15,18 @@ class Set {
   typedef Key value_type;             // NOLINT
   typedef C key_compare;              // NOLINT
   typedef key_compare value_compare;  // NOLINT
+
   Set() = default;
   Set(const Set& st);
   Set& operator=(const Set& st);
   ~Set();
+
   bool Empty() const;
   void Insert(const Key& elem);
   void Clear();
   void Erase(const Key& elem);
   bool IsFind(const Key& val);
   size_t Size();
-  void Inorder();
 
  private:
   struct Node {
@@ -35,24 +36,27 @@ class Set {
     size_t height;
     Key val;
   };
-  Node* root_ = nullptr;
-  size_t size_ = 0;
-  bool increase_ = false;
-  bool decrease_ = false;
+
   bool Compare(const Key& elem1, const Key& elem2, const C& comp = C()) const;
-  void InorderRecursive(Node* root);
   Node* FindMin(Node* root);
   Node* RemoveMin(Node* root);
   Node* EraseRecursive(Node* root, const Key& elem);
   void ClearRecursive(Node* root);
+
   Node* InsertRecursive(Node* root, const Key& val);
   size_t HeightDefine(Node* node);
   int BalanceFactor(Node* node);
   void HeightFix(Node* node);
+
   Node* Balance(Node* node);
   Node* LeftRotation(Node* node);
   Node* RightRotation(Node* node);
   bool FindElem(Node* node, const Key& val);
+
+  Node* root_ = nullptr;
+  size_t size_ = 0;
+  bool increase_ = false;
+  bool decrease_ = false;
 
  public:
   class ConstIterator {
@@ -62,19 +66,22 @@ class Set {
     typedef std::bidirectional_iterator_tag iterator_category;  // NOLINT
     typedef std::ptrdiff_t difference_type;                     // NOLINT
     typedef Key* pointer;                                       // NOLINT
+
     ConstIterator() = default;
     ConstIterator(Node* root);
     ConstIterator(const std::stack<Node*>& s, bool check);
+
     ConstIterator& operator++();
     ConstIterator operator++(int);
     ConstIterator& operator--();
     ConstIterator operator--(int);
+
     bool operator==(const ConstIterator& iter) const;
     bool operator!=(const ConstIterator& iter) const;
     const Key& operator*();
 
    private:
-    std::stack<struct Node*> st_;
+    std::stack<struct Node*> prev_nodes;
     struct Node* current_ = nullptr;
     struct Node* next_ = nullptr;
     struct Node* intermediate_ = nullptr;
@@ -87,6 +94,7 @@ class Set {
     CommonReverseIterator<Iterator> operator++(int);
     CommonReverseIterator<Iterator>& operator--();
     CommonReverseIterator<Iterator> operator--(int);
+
     bool operator==(const CommonReverseIterator<Iterator>& iter) const;
     bool operator!=(const CommonReverseIterator<Iterator>& iter) const;
     const Key& operator*();
@@ -100,15 +108,18 @@ class Set {
   typedef std::reverse_iterator<iterator> reverse_iterator;  // NOLINT
   typedef std::reverse_iterator<const_iterator>
       const_reverse_iterator;              // NOLINT
+
   iterator begin() const;                  // NOLINT
   const_iterator cbegin() const;           // NOLINT
   iterator end() const;                    // NOLINT
   const_iterator cend() const;             // NOLINT
+
   reverse_iterator rbegin() const;         // NOLINT
   reverse_iterator rend() const;           // NOLINT
   const_reverse_iterator crbegin() const;  // NOLINT
   const_reverse_iterator crend() const;    // NOLINT
   iterator Find(const Key& elem);
+
   const_iterator Find(const Key& elem) const;
   iterator LowerBound(const Key& elem);
   const_iterator LowerBound(const Key& elem) const;
@@ -333,13 +344,9 @@ bool Set<Key, C>::FindElem(Node* node, const Key& val) {
     return true;
   }
   if (node->val > val) {
-    bool res1 = FindElem(node->left, val);
-    if (res1) {
-      return true;
-    }
+    return FindElem(node->left, val);
   }
-  bool res2 = FindElem(node->right, val);
-  return res2;
+  return FindElem(node->right, val);
 }
 
 template <typename Key, typename C>
@@ -350,19 +357,6 @@ bool Set<Key, C>::IsFind(const Key& val) {
 template <typename Key, typename C>
 size_t Set<Key, C>::Size() {
   return size_;
-}
-
-template <typename Key, typename C>
-void Set<Key, C>::InorderRecursive(Node* root) {
-  if (root) {
-    InorderRecursive(root->left);
-    std::cout << root->val << " ";
-    InorderRecursive(root->right);
-  }
-}
-template <typename Key, typename C>
-void Set<Key, C>::Inorder() {
-  InorderRecursive(root_);
 }
 
 template <typename Key, typename C>
@@ -377,20 +371,20 @@ Set<Key, C>::ConstIterator::ConstIterator(Node* root)
 template <typename Key, typename C>
 Set<Key, C>::ConstIterator::ConstIterator(const std::stack<Node*>& s,
                                           bool check)
-    : st_(s) {
-  if (!st_.empty()) {
+    : prev_nodes(s) {
+  if (!prev_nodes.empty()) {
     if (check) {
-      next_ = st_.top();
-      st_.pop();
+      next_ = prev_nodes.top();
+      prev_nodes.pop();
       current_ = next_;
       next_ = next_->right;
       intermediate_ = nullptr;
     } else {
-      current_ = st_.top();
-      st_.pop();
-      if (!st_.empty()) {
-        next_ = st_.top();
-        st_.pop();
+      current_ = prev_nodes.top();
+      prev_nodes.pop();
+      if (!prev_nodes.empty()) {
+        next_ = prev_nodes.top();
+        prev_nodes.pop();
         intermediate_ = next_;
         next_ = next_->left;
       }
@@ -406,12 +400,12 @@ const Key& Set<Key, C>::ConstIterator::operator*() {
 template <typename Key, typename C>
 typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator++() {
   while (next_) {
-    st_.push(next_);
+    prev_nodes.push(next_);
     next_ = next_->left;
   }
-  if (!st_.empty()) {
-    next_ = st_.top();
-    st_.pop();
+  if (!prev_nodes.empty()) {
+    next_ = prev_nodes.top();
+    prev_nodes.pop();
     current_ = next_;
     next_ = next_->right;
   } else {
@@ -428,12 +422,12 @@ typename Set<Key, C>::ConstIterator& Set<Key, C>::ConstIterator::operator--() {
     return *this;
   }
   while (next_) {
-    st_.push(next_);
+    prev_nodes.push(next_);
     next_ = next_->right;
   }
-  if (!st_.empty()) {
-    next_ = st_.top();
-    st_.pop();
+  if (!prev_nodes.empty()) {
+    next_ = prev_nodes.top();
+    prev_nodes.pop();
     current_ = next_;
     next_ = next_->left;
   } else {
